@@ -15,6 +15,10 @@ import { ai } from '@/ai/genkit';
 const RandomArtistOutputSchema = z.object({
   artistName: z.string().describe('The name of the artist.'),
   bio: z.string().describe('A brief biography of the artist.'),
+  tracks: z.array(z.object({
+    title: z.string().describe("The title of the track."),
+    dataset: z.string().describe("The dataset the track appeared in."),
+  })).describe('A list of tracks by the artist, including the dataset they appeared in.'),
   bandcampUrl: z.string().optional().describe('The URL of the artist on Bandcamp, if available.'),
   spotifyUrl: z.string().optional().describe('The URL of the artist on Spotify, if available.'),
   youtubeUrl: z.string().optional().describe('The URL of the artist on YouTube, if available.'),
@@ -46,6 +50,7 @@ const randomArtistFlow = ai.defineFlow(
     return {
       artistName: selectedArtist.artistName,
       bio: profile.bio,
+      tracks: selectedArtist.tracks,
       bandcampUrl: selectedArtist.bandcampUrl,
       spotifyUrl: selectedArtist.spotifyUrl,
       youtubeUrl: selectedArtist.youtubeUrl,

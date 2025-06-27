@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Globe, Youtube } from 'lucide-react';
 import { BandcampIcon, SpotifyIcon } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { Badge } from './ui/badge';
 
 interface ArtistCardProps {
   artist: RandomArtistOutput;
@@ -39,6 +40,20 @@ export function ArtistCard({ artist }: ArtistCardProps) {
       </CardHeader>
       <CardContent>
         <p className="text-center text-muted-foreground text-lg leading-relaxed">{artist.bio}</p>
+
+        {artist.tracks && artist.tracks.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-center mb-3">Featured Tracks</h3>
+            <ul className="space-y-2">
+              {artist.tracks.map((track, index) => (
+                <li key={index} className="flex justify-between items-center bg-secondary/50 p-3 rounded-lg">
+                  <span className="font-medium">{track.title}</span>
+                  <Badge variant="outline">{track.dataset}</Badge>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6">
         <div className="flex items-center gap-4">
