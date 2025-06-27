@@ -144,6 +144,7 @@ function loadAndParseArtists(): Artist[] {
         
         // Add the fully-formed, original track to the artist's track list.
         artist.tracks.push(newTrack);
+        console.log(newTrack)
         console.log(`[artists.ts] Pushed track to artist. Total tracks for ${artistName}: ${artist.tracks.length}`);
       }
     } catch(e) {

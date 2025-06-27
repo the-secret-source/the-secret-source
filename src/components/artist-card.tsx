@@ -1,7 +1,7 @@
 import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Music, Youtube } from 'lucide-react';
+import { Music } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
@@ -15,6 +15,7 @@ import DiscogsIcon from '@/assets/icons/discogs.svg';
 import SpotifyIcon from '@/assets/icons/spotify.svg';
 import GithubIcon from '@/assets/icons/github.svg';
 import SoundCloudIcon from '@/assets/icons/soundcloud.svg';
+import YoutubeIcon from '@/assets/icons/youtube.svg';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -25,7 +26,7 @@ const iconMap: Record<string, React.ElementType> = {
   spotifyUrl: SpotifyIcon,
   appleMusicUrl: AppleMusicIcon,
   discogsUrl: DiscogsIcon,
-  youtubeUrl: Youtube,
+  youtubeUrl: YoutubeIcon,
   soundcloudUrl: SoundCloudIcon, // Using a generic icon as a fallback
 };
 
@@ -37,12 +38,15 @@ const linkLabels: Record<string, string> = {
   youtubeUrl: 'YouTube',
   soundcloudUrl: 'SoundCloud',
   weathervaneUrl: 'Weathervane Music',
-  mixRescueUrl: 'MixRescue',
+  mixRescueUrl: 'Mix Rescue',
 };
 
 export function ArtistCard({ artist }: ArtistCardProps) {
 
   const renderLink = (url: string, key: string) => {
+
+    console.log('Rendering link for', key, 'with URL', url);
+
     const Icon = iconMap[key] || Music;
     const label = linkLabels[key] || 'Listen';
 
@@ -51,7 +55,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
-              <Icon className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+              <Icon className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
             </a>
           </TooltipTrigger>
           <TooltipContent>
@@ -78,6 +82,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                     <li key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="text-muted-foreground">{track.title}</span>
+                        {track.bandcampUrl && console.log(track)}
                         <div className="flex items-center gap-2">
                           {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
                           {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
@@ -109,7 +114,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         ) : (
           <Button asChild variant="outline">
             <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <GithubIcon className="mr-2 h-4 w-4" />
+              <GithubIcon className="mr-2 h-5 w-5" />
               Know this artist? Contribute
             </a>
           </Button>

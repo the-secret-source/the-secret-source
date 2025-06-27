@@ -126,7 +126,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
         {year && <p>&copy; {year} The Secret Source. All Rights Reserved.</p>}
         <Button asChild variant="outline" size="sm">
           <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-            <GithubIcon className="mr-2 h-4 w-4" />
+            <GithubIcon className="mr-2 h-5 w-5" />
             Contribute on GitHub
           </a>
         </Button>
