@@ -59,13 +59,16 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
     const fileContent = fs.readFileSync(absolutePath, 'utf8');
     const parsedCsv = Papa.parse(fileContent, {
       header: true,
-      skipEmptyLines: true,
+      skipEmptyLines: 'greedy', // More robustly skips empty lines
     });
 
     for (const rawTrack of parsedCsv.data as any[]) {
+      // Skip any row that doesn't have the essential data.
+      if (!rawTrack.artist_name || !rawTrack.track_title) {
+        continue;
+      }
+      
       const { title, artistName, genre, source } = dataset.parser(rawTrack);
-
-      if (!artistName || !title) continue;
 
       if (!artistsMap.has(artistName)) {
         artistsMap.set(artistName, {
