@@ -41,7 +41,7 @@ const linkTypeFilters = [
   { id: 'youtubeUrl', label: 'YouTube' },
   { id: 'soundcloudUrl', label: 'SoundCloud' },
   { id: 'weathervaneUrl', label: 'Weathervane' },
-  { id: 'mixRescueUrl', label: 'MixRescue' },
+  { id: 'mixRescueUrl', label: 'Mix Rescue' },
   { id: 'otherLinks', label: 'Other' },
 ];
 
@@ -67,7 +67,9 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
         <h2 className="pl-2 text-xl font-semibold text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
           Stats
         </h2>
-        <SidebarTrigger />
+        <div className="hidden md:block">
+          <SidebarTrigger />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>

@@ -1,33 +1,15 @@
 import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Music, Youtube } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
-
-// Placeholder imports for your local SVG files.
-// You will need to create these SVG files in the `src/assets/icons/` directory.
-// For example: src/assets/icons/bandcamp.svg
-import AppleMusicIcon from '@/assets/icons/apple-music.svg';
-import BandcampIcon from '@/assets/icons/bandcamp.svg';
-import DiscogsIcon from '@/assets/icons/discogs.svg';
-import SpotifyIcon from '@/assets/icons/spotify.svg';
-import GithubIcon from '@/assets/icons/github.svg';
-import SoundCloudIcon from '@/assets/icons/soundcloud.svg';
+import { FaBandcamp, FaSpotify, FaApple, FaYoutube, FaSoundcloud, FaGithub, FaLink } from 'react-icons/fa';
+import { SiDiscogs } from 'react-icons/si';
 
 interface ArtistCardProps {
   artist: Artist;
 }
-
-const iconMap: Record<string, React.ElementType> = {
-  bandcampUrl: BandcampIcon,
-  spotifyUrl: SpotifyIcon,
-  appleMusicUrl: AppleMusicIcon,
-  discogsUrl: DiscogsIcon,
-  youtubeUrl: Youtube,
-  soundcloudUrl: SoundCloudIcon, // Using a generic icon as a fallback
-};
 
 const linkLabels: Record<string, string> = {
   bandcampUrl: 'Bandcamp',
@@ -37,21 +19,31 @@ const linkLabels: Record<string, string> = {
   youtubeUrl: 'YouTube',
   soundcloudUrl: 'SoundCloud',
   weathervaneUrl: 'Weathervane Music',
-  mixRescueUrl: 'MixRescue',
+  mixRescueUrl: 'Mix Rescue',
+};
+
+const iconMap: Record<string, React.ElementType> = {
+  bandcampUrl: FaBandcamp,
+  spotifyUrl: FaSpotify,
+  appleMusicUrl: FaApple,
+  discogsUrl: SiDiscogs,
+  youtubeUrl: FaYoutube,
+  soundcloudUrl: FaSoundcloud,
+  weathervaneUrl: FaLink,
+  mixRescueUrl: FaLink,
 };
 
 export function ArtistCard({ artist }: ArtistCardProps) {
-
   const renderLink = (url: string, key: string) => {
-    const Icon = iconMap[key] || Music;
     const label = linkLabels[key] || 'Listen';
+    const IconComponent = iconMap[key] || FaLink;
 
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
-              <Icon className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+              <IconComponent className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors" />
             </a>
           </TooltipTrigger>
           <TooltipContent>
@@ -59,8 +51,8 @@ export function ArtistCard({ artist }: ArtistCardProps) {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    )
-  }
+    );
+  };
   
   return (
     <Card className="w-full max-w-2xl animate-in fade-in-0 duration-700 shadow-xl">
@@ -70,15 +62,15 @@ export function ArtistCard({ artist }: ArtistCardProps) {
       <CardContent>
         {artist.tracks && artist.tracks.length > 0 && (
           <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
-            <AccordionItem value="item-1">
+            <AccordionItem value="item-1" className="border-b-0">
               <AccordionTrigger className="text-base">Featured Tracks</AccordionTrigger>
               <AccordionContent>
-                <ul className="space-y-2 text-left">
+                <ul className="text-left divide-y divide-border">
                   {artist.tracks.map((track, index) => (
-                    <li key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-muted-foreground">{track.title}</span>
-                        <div className="flex items-center gap-2">
+                    <li key={index} className="flex flex-col py-3 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="font-medium text-foreground">{track.title}</span>
+                      <div className="flex w-full items-center justify-between pt-3 sm:w-auto sm:pt-0 sm:justify-end sm:gap-6">
+                        <div className="flex items-center gap-5">
                           {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
                           {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
                           {track.appleMusicUrl && renderLink(track.appleMusicUrl, 'appleMusicUrl')}
@@ -86,10 +78,10 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                           {track.youtubeUrl && renderLink(track.youtubeUrl, 'youtubeUrl')}
                           {track.soundcloudUrl && renderLink(track.soundcloudUrl, 'soundcloudUrl')}
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{track.dataset}</Badge>
-                        {track.source && <Badge variant="outline">{track.source}</Badge>}
+                        <div className="flex flex-shrink-0 items-center gap-2 flex-wrap justify-end">
+                          <Badge variant="secondary" className="whitespace-nowrap">{track.dataset}</Badge>
+                          {track.source && <Badge variant="outline" className="whitespace-nowrap">{track.source}</Badge>}
+                        </div>
                       </div>
                     </li>
                   ))}
@@ -109,7 +101,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         ) : (
           <Button asChild variant="outline">
             <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <GithubIcon className="mr-2 h-4 w-4" />
+              <FaGithub className="h-5 w-5" />
               Know this artist? Contribute
             </a>
           </Button>
