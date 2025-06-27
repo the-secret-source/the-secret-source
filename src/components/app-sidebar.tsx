@@ -1,7 +1,7 @@
 import { getArtists } from "@/data/artists";
 import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger } from "@/components/ui/sidebar";
 import { Progress } from "@/components/ui/progress";
-import { Music, Users, Link2Off } from "lucide-react";
+import { Music, Users, Link, Link2Off } from "lucide-react";
 
 export function AppSidebar() {
   const artists = getArtists();
@@ -9,20 +9,18 @@ export function AppSidebar() {
   const trackCount = artists.reduce((sum, artist) => sum + artist.tracks.length, 0);
 
   const artistsWithLinks = artists.filter(artist => {
-    // An artist has links if they have a page link OR any of their tracks have a link.
     const hasArtistPageLink = artist.bandcampUrl || artist.spotifyUrl || artist.youtubeUrl || artist.discogsUrl || (artist.otherLinks && artist.otherLinks.length > 0);
     const hasTrackLink = artist.tracks.some(track => track.bandcampUrl || track.spotifyUrl);
     return hasArtistPageLink || hasTrackLink;
   }).length;
   
-  const artistsWithoutLinks = artistCount - artistsWithLinks;
-  const artistsWithoutLinksPercentage = artistCount > 0 ? Math.round((artistsWithoutLinks / artistCount) * 100) : 0;
+  const artistsWithLinksPercentage = artistCount > 0 ? Math.round((artistsWithLinks / artistCount) * 100) : 0;
   
   const tracksWithLinks = artists.reduce((sum, artist) => {
       return sum + artist.tracks.filter(track => track.bandcampUrl || track.spotifyUrl).length;
   }, 0);
-  const tracksWithoutLinks = trackCount - tracksWithLinks;
-  const tracksWithoutLinksPercentage = trackCount > 0 ? Math.round((tracksWithoutLinks / trackCount) * 100) : 0;
+
+  const tracksWithLinksPercentage = trackCount > 0 ? Math.round((tracksWithLinks / trackCount) * 100) : 0;
 
   return (
     <Sidebar>
@@ -56,24 +54,24 @@ export function AppSidebar() {
             <div className="flex flex-col w-full p-2 space-y-2 group-data-[collapsible=icon]:items-center">
               <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
                   <div className="flex items-center gap-3">
-                      <Link2Off className="h-5 w-5 text-sidebar-foreground/70" />
-                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Artists without links</span>
+                      <Link className="h-5 w-5 text-sidebar-foreground/70" />
+                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Artists with links</span>
                   </div>
-                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{artistsWithoutLinks}</span>
+                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{artistsWithLinks}</span>
               </div>
-              <Progress value={artistsWithoutLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden" />
+              <Progress value={artistsWithLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
             </div>
           </SidebarMenuItem>
           <SidebarMenuItem className="pointer-events-none">
             <div className="flex flex-col w-full p-2 space-y-2 group-data-[collapsible=icon]:items-center">
               <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
                   <div className="flex items-center gap-3">
-                      <Link2Off className="h-5 w-5 text-sidebar-foreground/70" />
-                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Tracks without links</span>
+                      <Link className="h-5 w-5 text-sidebar-foreground/70" />
+                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Tracks with links</span>
                   </div>
-                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{tracksWithoutLinks}</span>
+                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{tracksWithLinks}</span>
               </div>
-              <Progress value={tracksWithoutLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden" />
+              <Progress value={tracksWithLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
             </div>
           </SidebarMenuItem>
         </SidebarMenu>

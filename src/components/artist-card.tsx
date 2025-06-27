@@ -121,9 +121,11 @@ export function ArtistCard({ artist }: ArtistCardProps) {
             </a>
           </Button>
         ) : (
-          <Button variant="outline">
-            <Github className="mr-2 h-4 w-4" />
-            Know this artist? Contribute
+          <Button asChild variant="outline">
+            <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
+              <Github className="mr-2 h-4 w-4" />
+              Know this artist? Contribute
+            </a>
           </Button>
         )}
       </CardFooter>
