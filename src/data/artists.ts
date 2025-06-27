@@ -5,6 +5,9 @@
  * It's designed to be extensible for new datasets.
  */
 import { musdb18Tracklist } from './datasets/musdb-18';
+// To add a new dataset, import it here.
+// import { myDatasetTracklist } from './datasets/my-dataset';
+
 
 // Interfaces for unified data structure
 export interface Track {
@@ -22,48 +25,61 @@ export interface Artist {
   otherLinks?: string[];
 }
 
+// --- Dataset Definitions ---
+// Register all datasets here. Each object needs a name and the tracklist data.
+const datasetsToParse = [
+  {
+    name: 'MUSDB-18',
+    tracklist: musdb18Tracklist,
+    // The parser function can be customized per-dataset if the format differs.
+    parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2] }),
+  },
+  // Example for adding another dataset:
+  // {
+  //   name: 'My-Dataset',
+  //   tracklist: myDatasetTracklist,
+  //   parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2] }),
+  // }
+];
+
 /**
- * Parses the raw MUSDB-18 tracklist into the unified Artist format.
- * This function groups tracks by artist.
- * @param tracklist The raw tracklist from MUSDB-18, expected as [title, artist, genre][].
+ * Parses and merges tracklists from multiple datasets into a unified,
+ * de-duplicated list of artists.
+ * @param datasets An array of dataset objects to process.
  * @returns An array of artists, conforming to the Artist interface.
  */
-function parseMusdb18Data(tracklist: [string, string, string][]): Artist[] {
+function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
   const artistsMap = new Map<string, Artist>();
 
-  for (const [title, artistName, genre] of tracklist) {
-    if (!artistsMap.has(artistName)) {
-      artistsMap.set(artistName, {
-        artistName,
-        genre,
-        tracks: [],
-        // In a real scenario, social links would come from the dataset
-        // or a separate mapping file. For this demo, they are omitted.
-      });
-    }
+  for (const dataset of datasets) {
+    for (const rawTrack of dataset.tracklist) {
+      const { title, artistName, genre } = dataset.parser(rawTrack);
 
-    const artist = artistsMap.get(artistName)!;
-    artist.tracks.push({
-      title,
-      dataset: 'MUSDB-18',
-    });
+      if (!artistsMap.has(artistName)) {
+        artistsMap.set(artistName, {
+          artistName,
+          genre,
+          tracks: [],
+          // In a real scenario, social links could come from the dataset
+          // or a separate mapping file. They are omitted here to allow AI to find them.
+        });
+      }
+
+      const artist = artistsMap.get(artistName)!;
+      // Ensure the same track from a different dataset isn't added twice.
+      if (!artist.tracks.some(t => t.title === title)) {
+         artist.tracks.push({
+          title,
+          dataset: dataset.name,
+        });
+      }
+    }
   }
 
   return Array.from(artistsMap.values());
 }
 
 
-// --- Dataset Registration ---
-// To add a new dataset:
-// 1. Create a new data file in `src/data/datasets/`.
-// 2. Import the raw data here.
-// 3. Create a parser function for it (like parseMusdb18Data).
-// 4. Call the parser and add its output to the `artists` array below.
-
-const musdb18Artists = parseMusdb18Data(musdb18Tracklist);
-
-// Combine artists from all registered datasets.
-export const artists: Artist[] = [
-  ...musdb18Artists,
-  // ...add artists from other datasets here.
-];
+// --- Main Export ---
+// Process all registered datasets and export the final artist list.
+export const artists: Artist[] = parseAndMergeArtists(datasetsToParse);

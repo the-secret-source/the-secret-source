@@ -1,4 +1,4 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/random-artist-selection.ts';
+import '@/ai/flows/artist-randomizer.ts';

@@ -1,10 +1,11 @@
-import type { SVGProps } from 'react';
-import type { RandomArtistOutput } from '@/ai/flows/random-artist-selection';
+import type { RandomArtistOutput } from '@/ai/flows/artist-randomizer';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Globe, Youtube } from 'lucide-react';
 import { BandcampIcon, SpotifyIcon } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { Badge } from './ui/badge';
 
 interface ArtistCardProps {
   artist: RandomArtistOutput;
@@ -34,13 +35,31 @@ const SocialLink = ({ href, children, label }: { href: string; children: React.R
 export function ArtistCard({ artist }: ArtistCardProps) {
   return (
     <Card className="w-full max-w-2xl animate-in fade-in-0 duration-700 shadow-xl">
-      <CardHeader className="text-center">
+      <CardHeader className="text-center pb-2">
         <CardTitle className="text-3xl font-headline">{artist.artistName}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <p className="text-center text-muted-foreground text-lg leading-relaxed">{artist.bio}</p>
+
+        {artist.tracks && artist.tracks.length > 0 && (
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="text-base">Featured Tracks</AccordionTrigger>
+              <AccordionContent>
+                <ul className="space-y-2 text-left">
+                  {artist.tracks.map((track, index) => (
+                    <li key={index} className="flex items-center justify-between">
+                      <span className="text-muted-foreground">{track.title}</span>
+                      <Badge variant="secondary">{track.dataset}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
       </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6">
+      <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
         <div className="flex items-center gap-4">
           {artist.youtubeUrl && (
             <SocialLink href={artist.youtubeUrl} label="YouTube">

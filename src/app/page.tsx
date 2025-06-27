@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
-import { getRandomArtist, type RandomArtistOutput } from '@/ai/flows/random-artist-selection';
+import { getRandomArtist, type RandomArtistOutput } from '@/ai/flows/artist-randomizer';
 import { useToast } from '@/hooks/use-toast';
 import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';

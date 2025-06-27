@@ -10,6 +10,7 @@
 import { z } from 'genkit';
 import { artists } from '@/data/artists';
 import { generateArtistProfile } from './artist-profile-generator';
+import { findArtistLinks } from './find-artist-links';
 import { ai } from '@/ai/genkit';
 
 const RandomArtistOutputSchema = z.object({
@@ -40,21 +41,37 @@ const randomArtistFlow = ai.defineFlow(
     const randomIndex = Math.floor(Math.random() * artists.length);
     const selectedArtist = artists[randomIndex];
 
-    // 2. Generate a bio for the artist.
-    const profile = await generateArtistProfile({
+    // 2. Generate a bio for the artist in parallel.
+    const profilePromise = generateArtistProfile({
       artistName: selectedArtist.artistName,
       artistGenre: selectedArtist.genre,
     });
 
-    // 3. Combine data and return.
+    // 3. If links are missing, search for them in parallel.
+    const linksPromise =
+      selectedArtist.bandcampUrl || selectedArtist.spotifyUrl || selectedArtist.youtubeUrl
+        ? Promise.resolve({
+            bandcampUrl: selectedArtist.bandcampUrl,
+            spotifyUrl: selectedArtist.spotifyUrl,
+            youtubeUrl: selectedArtist.youtubeUrl,
+            otherLinks: selectedArtist.otherLinks,
+          })
+        : findArtistLinks({
+            artistName: selectedArtist.artistName,
+            artistGenre: selectedArtist.genre,
+          });
+
+    const [profile, links] = await Promise.all([profilePromise, linksPromise]);
+
+    // 4. Combine data and return.
     return {
       artistName: selectedArtist.artistName,
       bio: profile.bio,
       tracks: selectedArtist.tracks,
-      bandcampUrl: selectedArtist.bandcampUrl,
-      spotifyUrl: selectedArtist.spotifyUrl,
-      youtubeUrl: selectedArtist.youtubeUrl,
-      otherLinks: selectedArtist.otherLinks,
+      bandcampUrl: selectedArtist.bandcampUrl || links.bandcampUrl,
+      spotifyUrl: selectedArtist.spotifyUrl || links.spotifyUrl,
+      youtubeUrl: selectedArtist.youtubeUrl || links.youtubeUrl,
+      otherLinks: selectedArtist.otherLinks || links.otherLinks,
     };
   }
 );
