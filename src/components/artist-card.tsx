@@ -54,8 +54,8 @@ export function ArtistCard({ artist }: ArtistCardProps) {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
-              <Icon className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
+            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`} className="block h-5 w-5">
+              <Icon className="h-full w-full text-muted-foreground transition-colors hover:text-foreground" />
             </a>
           </TooltipTrigger>
           <TooltipContent>
