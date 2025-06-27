@@ -25,14 +25,14 @@ export function ArtistCard({ artist }: ArtistCardProps) {
 
   const renderLink = (url: string, key: string) => {
     const label = linkLabels[key] || 'Listen';
-    const hint = key.replace('Url', '');
+    const iconName = key.replace('Url', '');
 
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`} className="block h-5 w-5 relative">
-              <Image src="https://placehold.co/20x20.png" alt={`${label} icon`} layout="fill" objectFit="contain" data-ai-hint={hint} />
+              <Image src={`/assets/icons/${iconName}.png`} alt={`${label} icon`} layout="fill" objectFit="contain" />
             </a>
           </TooltipTrigger>
           <TooltipContent>
@@ -59,7 +59,6 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                     <li key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="text-muted-foreground">{track.title}</span>
-                        {track.bandcampUrl && console.log(track)}
                         <div className="flex items-center gap-2">
                           {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
                           {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
@@ -91,7 +90,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         ) : (
           <Button asChild variant="outline">
             <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <Image src="https://placehold.co/20x20.png" alt="GitHub icon" width={20} height={20} data-ai-hint="github" />
+              <Image src="/assets/icons/github.png" alt="GitHub icon" width={20} height={20} />
               Know this artist? Contribute
             </a>
           </Button>
