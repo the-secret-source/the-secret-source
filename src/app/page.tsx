@@ -1,29 +1,62 @@
 import { MainLayout } from '@/components/main-layout';
 import { getArtists, getDatasetNames } from '@/data/artists';
+import type { Artist, Track } from '@/lib/types';
 
 export default function Home() {
   const artists = getArtists();
   const allDatasetNames = getDatasetNames();
 
   const artistCount = artists.length;
-  const trackCount = artists.reduce((sum, artist) => sum + artist.tracks.length, 0);
+  const allTracks = artists.flatMap(a => a.tracks);
+  const trackCount = allTracks.length;
 
-  const paidLinkKeys = ['bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl'];
+  const directSupportKeys = ['bandcampUrl', 'discogsUrl'];
+  const streamingKeys = ['spotifyUrl', 'appleMusicUrl'];
+  const otherLinkKeys = ['youtubeUrl', 'otherLinks', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl'];
 
-  const artistsWithPaidLinks = artists.filter(artist => {
-    const hasArtistPageLink = paidLinkKeys.some(key => !!artist[key]);
-    const hasTrackLink = artist.tracks.some(track => paidLinkKeys.some(key => !!track[key]));
-    return hasArtistPageLink || hasTrackLink;
-  }).length;
+  const hasLink = (obj: any, keys: string[]) => {
+    if (!obj) return false;
+    return keys.some(key => {
+      if (key === 'otherLinks') {
+        return Array.isArray(obj[key]) && obj[key].length > 0;
+      }
+      return !!obj[key];
+    });
+  }
 
-  const artistsWithPaidLinksPercentage = artistCount > 0 ? Math.round((artistsWithPaidLinks / artistCount) * 100) : 0;
+  // Categorize Artists based on the best available link
+  const artistsCategorized = artists.map(artist => {
+    const hasArtistDirectLink = hasLink(artist, directSupportKeys);
+    const hasTrackDirectLink = artist.tracks.some(track => hasLink(track, directSupportKeys));
+    if (hasArtistDirectLink || hasTrackDirectLink) return 'direct';
+
+    const hasArtistStreamingLink = hasLink(artist, streamingKeys);
+    const hasTrackStreamingLink = artist.tracks.some(track => hasLink(track, streamingKeys));
+    if (hasArtistStreamingLink || hasTrackStreamingLink) return 'streaming';
+
+    const hasArtistOtherLink = hasLink(artist, otherLinkKeys);
+    const hasTrackOtherLink = artist.tracks.some(track => hasLink(track, otherLinkKeys));
+    if (hasArtistOtherLink || hasTrackOtherLink) return 'other';
+
+    return 'none';
+  });
+
+  const artistsWithDirectSupport = artistsCategorized.filter(c => c === 'direct').length;
+  const artistsWithStreaming = artistsCategorized.filter(c => c === 'streaming').length;
+  const artistsWithOther = artistsCategorized.filter(c => c === 'other').length;
+
+  // Categorize Tracks based on the best available link
+  const tracksCategorized = allTracks.map(track => {
+    if (hasLink(track, directSupportKeys)) return 'direct';
+    if (hasLink(track, streamingKeys)) return 'streaming';
+    if (hasLink(track, otherLinkKeys)) return 'other';
+    return 'none';
+  });
   
-  const tracksWithPaidLinks = artists.reduce((sum, artist) => {
-    return sum + artist.tracks.filter(track => paidLinkKeys.some(key => !!track[key])).length;
-  }, 0);
-
-  const tracksWithPaidLinksPercentage = trackCount > 0 ? Math.round((tracksWithPaidLinks / trackCount) * 100) : 0;
-
+  const tracksWithDirectSupport = tracksCategorized.filter(c => c === 'direct').length;
+  const tracksWithStreaming = tracksCategorized.filter(c => c === 'streaming').length;
+  const tracksWithOther = tracksCategorized.filter(c => c === 'other').length;
+  
   const datasetCounts = allDatasetNames.reduce((acc, name) => {
     const artistsInDataset = new Set<string>();
     let tracksInDataset = 0;
@@ -44,10 +77,18 @@ export default function Home() {
   const stats = {
     artistCount,
     trackCount,
-    artistsWithPaidLinks,
-    artistsWithPaidLinksPercentage,
-    tracksWithPaidLinks,
-    tracksWithPaidLinksPercentage,
+    artistsWithDirectSupport,
+    artistsWithStreaming,
+    artistsWithOther,
+    artistsWithDirectSupportPercentage: artistCount > 0 ? Math.round((artistsWithDirectSupport / artistCount) * 100) : 0,
+    artistsWithStreamingPercentage: artistCount > 0 ? Math.round((artistsWithStreaming / artistCount) * 100) : 0,
+    artistsWithOtherPercentage: artistCount > 0 ? Math.round((artistsWithOther / artistCount) * 100) : 0,
+    tracksWithDirectSupport,
+    tracksWithStreaming,
+    tracksWithOther,
+    tracksWithDirectSupportPercentage: trackCount > 0 ? Math.round((tracksWithDirectSupport / trackCount) * 100) : 0,
+    tracksWithStreamingPercentage: trackCount > 0 ? Math.round((tracksWithStreaming / trackCount) * 100) : 0,
+    tracksWithOtherPercentage: trackCount > 0 ? Math.round((tracksWithOther / trackCount) * 100) : 0,
     datasetCounts,
   };
 

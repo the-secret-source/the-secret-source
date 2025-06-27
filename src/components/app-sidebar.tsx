@@ -1,18 +1,26 @@
 'use client';
 
 import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail, SidebarSeparator, SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
-import { Progress } from "@/components/ui/progress";
 import { Music, Users, Link, Filter, HelpCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { StackedProgress } from "./ui/stacked-progress";
 
 export interface AppSidebarStats {
   artistCount: number;
   trackCount: number;
-  artistsWithPaidLinks: number;
-  artistsWithPaidLinksPercentage: number;
-  tracksWithPaidLinks: number;
-  tracksWithPaidLinksPercentage: number;
+  artistsWithDirectSupport: number;
+  artistsWithStreaming: number;
+  artistsWithOther: number;
+  artistsWithDirectSupportPercentage: number;
+  artistsWithStreamingPercentage: number;
+  artistsWithOtherPercentage: number;
+  tracksWithDirectSupport: number;
+  tracksWithStreaming: number;
+  tracksWithOther: number;
+  tracksWithDirectSupportPercentage: number;
+  tracksWithStreamingPercentage: number;
+  tracksWithOtherPercentage: number;
   datasetCounts: Record<string, { artists: number; tracks: number }>;
 }
 
@@ -26,7 +34,19 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, withLinksOnly, onWithLinksOnlyToggle }: AppSidebarProps) {
-  const { artistCount, trackCount, artistsWithPaidLinks, artistsWithPaidLinksPercentage, tracksWithPaidLinks, tracksWithPaidLinksPercentage } = stats;
+  const { artistCount, trackCount } = stats;
+
+  const artistProgressData = [
+    { value: stats.artistsWithDirectSupportPercentage, color: 'bg-accent', tooltip: `${stats.artistsWithDirectSupport} artists with direct support links` },
+    { value: stats.artistsWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.artistsWithStreaming} artists with streaming links` },
+    { value: stats.artistsWithOtherPercentage, color: 'bg-chart-4', tooltip: `${stats.artistsWithOther} artists with other links` },
+  ];
+
+  const trackProgressData = [
+    { value: stats.tracksWithDirectSupportPercentage, color: 'bg-accent', tooltip: `${stats.tracksWithDirectSupport} tracks with direct support links` },
+    { value: stats.tracksWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.tracksWithStreaming} tracks with streaming links` },
+    { value: stats.tracksWithOtherPercentage, color: 'bg-chart-4', tooltip: `${stats.tracksWithOther} tracks with other links` },
+  ];
 
   return (
     <Sidebar>
@@ -62,11 +82,10 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
               <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
                   <div className="flex items-center gap-3">
                       <Link className="h-5 w-5 text-sidebar-foreground/70" />
-                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Artists w/ Support Links</span>
+                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Artists with Links</span>
                   </div>
-                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{artistsWithPaidLinks}</span>
               </div>
-              <Progress value={artistsWithPaidLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
+              <StackedProgress data={artistProgressData} className="h-2 group-data-[collapsible=icon]:hidden" />
             </div>
           </SidebarMenuItem>
           <SidebarMenuItem className="pointer-events-none">
@@ -74,11 +93,10 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
               <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
                   <div className="flex items-center gap-3">
                       <Link className="h-5 w-5 text-sidebar-foreground/70" />
-                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Tracks w/ Support Links</span>
+                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Tracks with Links</span>
                   </div>
-                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{tracksWithPaidLinks}</span>
               </div>
-              <Progress value={tracksWithPaidLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
+              <StackedProgress data={trackProgressData} className="h-2 group-data-[collapsible=icon]:hidden" />
             </div>
           </SidebarMenuItem>
 
@@ -134,11 +152,15 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
             <div className="flex flex-col gap-2 pt-2 text-xs text-sidebar-foreground/90 pl-2 group-data-[collapsible=icon]:hidden">
               <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-accent" />
-                  <span>Direct Support Link</span>
+                  <span>Direct Support (Purchase)</span>
               </div>
               <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-yellow-400" />
-                  <span>General Link</span>
+                  <div className="h-2 w-2 rounded-full bg-chart-2" />
+                  <span>Streaming</span>
+              </div>
+              <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-chart-4" />
+                  <span>Other</span>
               </div>
             </div>
           </SidebarGroup>
