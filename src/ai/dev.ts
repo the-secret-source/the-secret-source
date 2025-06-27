@@ -1,1 +1,5 @@
-// Flows will be imported for their side effects in this file.
+import { config } from 'dotenv';
+config();
+
+import '@/ai/flows/artist-randomizer.ts';
+import '@/ai/flows/artist-profile-generator.ts';
