@@ -18,33 +18,30 @@ const datasetsToParse = [
   {
     name: 'MUSDB-18',
     filePath: 'datasets/musdb-18.csv',
-    // The parser function can be customized per-dataset if the format differs.
-    parser: (row: any) => ({
-      title: row.track_title,
-      artistName: row.artist_name,
-      genre: row.genre,
-      source: row.source,
-      links: {
-        bandcampUrl: row.bandcamp_url || undefined,
-        spotifyUrl: row.spotify_url || undefined,
-        discogsUrl: row.discogs_url || undefined,
-      },
-    }),
+    // The parser function dynamically handles any column ending in `_url`.
+    parser: (row: any) => {
+      const parsed: { [key: string]: any } = {
+        title: row.track_title,
+        artistName: row.artist_name,
+        genre: row.genre,
+        source: row.source,
+        links: {},
+      };
+
+      for (const key in row) {
+        if (key.endsWith('_url') && row[key]) {
+          const camelCaseKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+          parsed.links[camelCaseKey] = row[key];
+        }
+      }
+      return parsed;
+    },
   },
   // Example for adding another dataset:
   // {
   //   name: 'My-Dataset',
   //   filePath: 'datasets/my-dataset.csv',
-  //   parser: (row: any) => ({
-  //     title: row.track_title,
-  //     artistName: row.artist_name,
-  //     genre: row.genre,
-  //     source: row.source,
-  //     links: {
-  //       bandcampUrl: row.bandcamp_url || undefined,
-  //       spotifyUrl: row.spotify_url || undefined
-  //     },
-  //   }),
+  //   parser: (row: any) => { /* ... */ }
   // }
 ];
 
@@ -62,11 +59,10 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
     const fileContent = fs.readFileSync(absolutePath, 'utf8');
     const parsedCsv = Papa.parse(fileContent, {
       header: true,
-      skipEmptyLines: 'greedy', // More robustly skips empty lines
+      skipEmptyLines: 'greedy',
     });
 
     for (const rawTrack of parsedCsv.data as any[]) {
-      // Skip any row that doesn't have the essential data.
       if (!rawTrack.artist_name || !rawTrack.track_title) {
         continue;
       }
@@ -78,7 +74,6 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
           artistName,
           genre,
           tracks: [],
-          // Social links are found by the AI, not from the initial dataset.
         });
       }
 
@@ -88,31 +83,32 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
         title,
         dataset: dataset.name,
         source: source,
-        bandcampUrl: links.bandcampUrl,
-        spotifyUrl: links.spotifyUrl,
-        discogsUrl: links.discogsUrl,
+        ...links, // Spread all dynamic URLs onto the track object
       };
 
       artist.tracks.push(newTrack);
 
-      // Infer artist bandcampUrl from the first available track bandcampUrl
-      if (!artist.bandcampUrl && newTrack.bandcampUrl) {
-        try {
-          const url = new URL(newTrack.bandcampUrl);
-          if (url.hostname.endsWith('bandcamp.com')) {
-             // From: https://artist.bandcamp.com/track/song-title
-             // To:   https://artist.bandcamp.com
-            artist.bandcampUrl = `${url.protocol}//${url.hostname}`;
+      // Infer artist-level URLs from track URLs.
+      for (const urlKey in links) {
+        // If the artist doesn't have this URL yet, try to infer it.
+        if (!artist[urlKey]) {
+          const trackUrl = links[urlKey];
+          // Special logic for Bandcamp to get the root artist page
+          if (urlKey === 'bandcampUrl') {
+            try {
+              const url = new URL(trackUrl);
+              if (url.hostname.endsWith('bandcamp.com')) {
+                artist.bandcampUrl = `${url.protocol}//${url.hostname}`;
+              }
+            } catch (e) {
+              console.error(`Could not parse bandcamp URL for track: ${trackUrl}`);
+            }
+          } else {
+            // For all other URLs (spotify, discogs, etc.), we'll just copy the first one we find.
+            // This is a reasonable default, though not perfect for all services (like Spotify).
+            artist[urlKey] = trackUrl;
           }
-        } catch (e) {
-          // Ignore invalid URLs
-          console.error(`Could not parse bandcamp URL for track: ${newTrack.bandcampUrl}`);
         }
-      }
-
-      // Infer artist discogsUrl from the first available track discogsUrl
-      if (!artist.discogsUrl && newTrack.discogsUrl) {
-        artist.discogsUrl = newTrack.discogsUrl;
       }
     }
   }
