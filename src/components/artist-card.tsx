@@ -1,7 +1,7 @@
 import type { Artist } from '@/data/artists';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Globe, Youtube } from 'lucide-react';
+import { Globe, Youtube, Github } from 'lucide-react';
 import { BandcampIcon, SpotifyIcon } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
@@ -33,6 +33,8 @@ const SocialLink = ({ href, children, label }: { href: string; children: React.R
 );
 
 export function ArtistCard({ artist }: ArtistCardProps) {
+  const hasAnyLinks = artist.bandcampUrl || artist.spotifyUrl || artist.youtubeUrl || (artist.otherLinks && artist.otherLinks.length > 0);
+
   return (
     <Card className="w-full max-w-2xl animate-in fade-in-0 duration-700 shadow-xl">
       <CardHeader className="text-center pb-2">
@@ -112,8 +114,13 @@ export function ArtistCard({ artist }: ArtistCardProps) {
               Support on Bandcamp
             </a>
           </Button>
+        ) : !hasAnyLinks ? (
+          <Button variant="outline">
+            <Github className="mr-2 h-4 w-4" />
+            Know this artist? Contribute
+          </Button>
         ) : (
-          <div className="h-10"></div> // Placeholder for spacing if no Bandcamp link
+          <div className="h-10"></div> 
         )}
       </CardFooter>
     </Card>
