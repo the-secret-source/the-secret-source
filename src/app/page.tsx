@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
-import { getRandomArtist, type RandomArtistOutput } from '@/ai/flows/artist-randomizer';
+import { getRandomArtist, type RandomArtistOutput } from '@/ai/flows/random-artist-selection';
 import { useToast } from '@/hooks/use-toast';
 import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';
@@ -18,6 +18,7 @@ export default function Home() {
   const fetchArtist = async () => {
     setIsLoading(true);
     setError(null);
+    setArtist(null);
     try {
       const artistData = await getRandomArtist();
       setArtist(artistData);
@@ -56,7 +57,7 @@ export default function Home() {
         </header>
 
         <div className="w-full min-h-[300px] flex items-center justify-center">
-          {isDiscovering && !artist ? (
+          {isDiscovering ? (
             <ArtistCardSkeleton />
           ) : artist ? (
             <ArtistCard key={artist.artistName} artist={artist} />
