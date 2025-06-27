@@ -39,7 +39,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         <CardTitle className="text-3xl font-headline">{artist.artistName}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-center text-muted-foreground text-lg leading-relaxed">{artist.bio}</p>
+        <p className="text-center text-muted-foreground text-lg leading-relaxed">{artist.genre}</p>
 
         {artist.tracks && artist.tracks.length > 0 && (
           <Accordion type="single" collapsible className="w-full" defaultValue="item-1">

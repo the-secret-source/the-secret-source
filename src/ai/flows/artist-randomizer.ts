@@ -9,13 +9,12 @@
 
 import { z } from 'genkit';
 import { artists } from '@/data/artists';
-import { generateArtistProfile } from './artist-profile-generator';
 import { findArtistLinks } from './find-artist-links';
 import { ai } from '@/ai/genkit';
 
 const RandomArtistOutputSchema = z.object({
   artistName: z.string().describe('The name of the artist.'),
-  bio: z.string().describe('A brief biography of the artist.'),
+  genre: z.string().describe('The genre of the artist.'),
   tracks: z.array(z.object({
     title: z.string().describe("The title of the track."),
     dataset: z.string().describe("The dataset the track appeared in."),
@@ -43,32 +42,24 @@ const randomArtistFlow = ai.defineFlow(
     const randomIndex = Math.floor(Math.random() * artists.length);
     const selectedArtist = artists[randomIndex];
 
-    // 2. Generate a bio for the artist in parallel.
-    const profilePromise = generateArtistProfile({
-      artistName: selectedArtist.artistName,
-      artistGenre: selectedArtist.genre,
-    });
-
-    // 3. If links are missing, search for them in parallel.
-    const linksPromise =
+    // 2. If links are missing, search for them.
+    const links =
       selectedArtist.bandcampUrl || selectedArtist.spotifyUrl || selectedArtist.youtubeUrl
-        ? Promise.resolve({
+        ? {
             bandcampUrl: selectedArtist.bandcampUrl,
             spotifyUrl: selectedArtist.spotifyUrl,
             youtubeUrl: selectedArtist.youtubeUrl,
             otherLinks: selectedArtist.otherLinks,
-          })
-        : findArtistLinks({
+          }
+        : await findArtistLinks({
             artistName: selectedArtist.artistName,
             artistGenre: selectedArtist.genre,
           });
 
-    const [profile, links] = await Promise.all([profilePromise, linksPromise]);
-
-    // 4. Combine data and return.
+    // 3. Combine data and return.
     return {
       artistName: selectedArtist.artistName,
-      bio: profile.bio,
+      genre: selectedArtist.genre,
       tracks: selectedArtist.tracks,
       bandcampUrl: selectedArtist.bandcampUrl || links.bandcampUrl,
       spotifyUrl: selectedArtist.spotifyUrl || links.spotifyUrl,
