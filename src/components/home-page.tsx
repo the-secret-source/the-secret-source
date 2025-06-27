@@ -3,7 +3,6 @@
 import { useState, useEffect, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { getRandomArtist } from '@/ai/flows/artist-randomizer';
-import { findArtistLinks } from '@/ai/flows/find-artist-links';
 import { type Artist } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { ArtistCard } from '@/components/artist-card';
@@ -23,27 +22,11 @@ export function HomePage() {
     setError(null);
     setArtist(null);
     try {
-      // First, get a random artist from the local dataset
-      let artistData = await getRandomArtist();
+      // Get a random artist from the local dataset
+      const artistData = await getRandomArtist();
 
       if (!artistData) {
         throw new Error("No artist data could be loaded. The dataset might be empty or invalid.");
-      }
-
-      // If the artist data from the file doesn't have links, search for them.
-      const hasLinks = artistData.bandcampUrl || artistData.spotifyUrl || artistData.youtubeUrl || (artistData.otherLinks && artistData.otherLinks.length > 0);
-
-      if (!hasLinks) {
-        try {
-          const links = await findArtistLinks({
-            artistName: artistData.artistName,
-          });
-          // Merge the newly found links into the artist data
-          artistData = { ...artistData, ...links };
-        } catch (linkError) {
-            console.error("Failed to fetch artist links, continuing without them.", linkError);
-            // We can proceed without links, the card will show the "contribute" button.
-        }
       }
       
       setArtist(artistData);
