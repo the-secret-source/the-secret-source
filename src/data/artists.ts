@@ -114,27 +114,15 @@ function loadAndParseArtists(): Artist[] {
         artist.tracks.push(newTrack);
 
         // --- Populate Artist-Level Links from Track Data ---
-
-        // First, specifically handle inferring the main artist Bandcamp page.
-        // We only want to do this once per artist, from the first track that has a valid link.
-        if (links.bandcampUrl && !artist.bandcampUrl) {
-          try {
-            const url = new URL(links.bandcampUrl);
-            if (url.hostname.endsWith('bandcamp.com')) {
-              const inferredUrl = `${url.protocol}//${url.hostname}`;
-              artist.bandcampUrl = inferredUrl;
-              console.log(`[artists.ts] Inferred and set Bandcamp URL for ${artistName}: ${inferredUrl}`);
-            }
-          } catch (e) {
-            console.error(`[artists.ts] Could not parse URL for inference: ${links.bandcampUrl}`, e);
-          }
-        }
-
-        // Next, copy over all other links from the track to the artist,
-        // but only if the artist doesn't have that link type set yet.
+        // Copy over links from the track to the artist, but only if the artist
+        // doesn't have that link type set yet. This ensures the first link of
+        // a certain type found becomes the artist's primary link for that type.
         for (const urlKey in links) {
+          // We do not infer the main artist bandcamp URL from a track.
+          // The "Support on Bandcamp" button should only appear if a specific
+          // artist-level bandcampUrl is provided in the dataset.
           if (urlKey === 'bandcampUrl') {
-            continue; // Already specially handled above
+            continue;
           }
           if (!artist[urlKey]) {
             const trackUrl = links[urlKey];
