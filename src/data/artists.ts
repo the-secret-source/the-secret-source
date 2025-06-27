@@ -130,11 +130,11 @@ function loadAndParseArtists(): Artist[] {
  */
 export function getArtists(): Artist[] {
     console.log('[artists.ts] getArtists() called.');
-    if (cachedArtists) {
+    if (cachedArtists && cachedArtists.length > 0) {
         console.log(`[artists.ts] Returning cached artists. Count: ${cachedArtists.length}`);
         return cachedArtists;
     }
-    console.log('[artists.ts] No cached artists found. Loading from source.');
+    console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
     cachedArtists = loadAndParseArtists();
     console.log(`[artists.ts] Caching and returning new artists. Count: ${cachedArtists.length}`);
     return cachedArtists;
