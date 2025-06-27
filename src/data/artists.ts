@@ -9,9 +9,6 @@ import path from 'path';
 import Papa from 'papaparse';
 import type { Artist, Track } from '@/lib/types';
 
-// To add a new dataset, import it here.
-// import { myDatasetTracklist } from './datasets/my-dataset';
-
 // --- Dataset Definitions ---
 // Register all datasets here. Each object needs a name and the tracklist data.
 const datasetsToParse = [
@@ -55,62 +52,66 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
   const artistsMap = new Map<string, Artist>();
 
   for (const dataset of datasets) {
-    const absolutePath = path.join(process.cwd(), 'src/data', dataset.filePath);
-    const fileContent = fs.readFileSync(absolutePath, 'utf8');
-    const parsedCsv = Papa.parse(fileContent, {
-      header: true,
-      skipEmptyLines: 'greedy',
-    });
-
-    for (const rawTrack of parsedCsv.data as any[]) {
-      // A more robust check to ensure that we only process valid track data.
-      if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
-        continue;
-      }
+    try {
+      const absolutePath = path.join(process.cwd(), 'src/data', dataset.filePath);
+      const fileContent = fs.readFileSync(absolutePath, 'utf8');
       
-      const { title, artistName, genre, source, links } = dataset.parser(rawTrack);
+      const parsedCsv = Papa.parse(fileContent, {
+        header: true,
+        skipEmptyLines: 'greedy',
+      });
 
-      if (!artistsMap.has(artistName)) {
-        artistsMap.set(artistName, {
-          artistName,
-          genre,
-          tracks: [],
-        });
-      }
+      for (const rawTrack of parsedCsv.data as any[]) {
+        // A more robust check to ensure that we only process valid track data.
+        if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
+          continue;
+        }
+        
+        const { title, artistName, genre, source, links } = dataset.parser(rawTrack);
 
-      const artist = artistsMap.get(artistName)!;
+        if (!artistsMap.has(artistName)) {
+          artistsMap.set(artistName, {
+            artistName,
+            genre,
+            tracks: [],
+          });
+        }
 
-      const newTrack: Track = {
-        title,
-        dataset: dataset.name,
-        source: source,
-        ...links, // Spread all dynamic URLs onto the track object
-      };
+        const artist = artistsMap.get(artistName)!;
 
-      artist.tracks.push(newTrack);
+        const newTrack: Track = {
+          title,
+          dataset: dataset.name,
+          source: source,
+          ...links, // Spread all dynamic URLs onto the track object
+        };
 
-      // Infer artist-level URLs from track URLs.
-      for (const urlKey in links) {
-        // If the artist doesn't have this URL yet, try to infer it.
-        if (!artist[urlKey]) {
-          const trackUrl = links[urlKey];
-          // Special logic for Bandcamp to get the root artist page
-          if (urlKey === 'bandcampUrl') {
-            try {
-              const url = new URL(trackUrl);
-              if (url.hostname.endsWith('bandcamp.com')) {
-                artist.bandcampUrl = `${url.protocol}//${url.hostname}`;
+        artist.tracks.push(newTrack);
+
+        // Infer artist-level URLs from track URLs.
+        for (const urlKey in links) {
+          // If the artist doesn't have this URL yet, try to infer it.
+          if (!artist[urlKey]) {
+            const trackUrl = links[urlKey];
+            // Special logic for Bandcamp to get the root artist page
+            if (urlKey === 'bandcampUrl' && trackUrl) {
+              try {
+                const url = new URL(trackUrl);
+                if (url.hostname.endsWith('bandcamp.com')) {
+                  artist.bandcampUrl = `${url.protocol}//${url.hostname}`;
+                }
+              } catch (e) {
+                console.error(`Could not parse bandcamp URL for track: ${trackUrl}`);
               }
-            } catch (e) {
-              console.error(`Could not parse bandcamp URL for track: ${trackUrl}`);
+            } else if (trackUrl) {
+              // For all other URLs (spotify, discogs, etc.), we'll just copy the first one we find.
+              artist[urlKey] = trackUrl;
             }
-          } else {
-            // For all other URLs (spotify, discogs, etc.), we'll just copy the first one we find.
-            // This is a reasonable default, though not perfect for all services (like Spotify).
-            artist[urlKey] = trackUrl;
           }
         }
       }
+    } catch(e) {
+      console.error(`Failed to read or process dataset: ${dataset.name}`, e);
     }
   }
 
