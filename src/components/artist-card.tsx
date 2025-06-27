@@ -70,7 +70,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                     <li key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="text-muted-foreground">{track.title}</span>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
                           {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
                           {track.appleMusicUrl && renderLink(track.appleMusicUrl, 'appleMusicUrl')}
@@ -79,9 +79,9 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                           {track.soundcloudUrl && renderLink(track.soundcloudUrl, 'soundcloudUrl')}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{track.dataset}</Badge>
-                        {track.source && <Badge variant="outline">{track.source}</Badge>}
+                      <div className="flex items-center gap-2 flex-wrap justify-end">
+                        <Badge variant="secondary" className="whitespace-nowrap">{track.dataset}</Badge>
+                        {track.source && <Badge variant="outline" className="whitespace-nowrap">{track.source}</Badge>}
                       </div>
                     </li>
                   ))}
@@ -101,7 +101,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         ) : (
           <Button asChild variant="outline">
             <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <FaGithub />
+              <FaGithub className="h-5 w-5" />
               Know this artist? Contribute
             </a>
           </Button>
