@@ -13,6 +13,8 @@ import { musdb18Tracklist } from './datasets/musdb-18';
 export interface Track {
   title: string;
   dataset: string;
+  bandcampUrl?: string;
+  spotifyUrl?: string;
 }
 
 export interface Artist {
@@ -32,13 +34,13 @@ const datasetsToParse = [
     name: 'MUSDB-18',
     tracklist: musdb18Tracklist,
     // The parser function can be customized per-dataset if the format differs.
-    parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2] }),
+    parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2], links: track[3] }),
   },
   // Example for adding another dataset:
   // {
   //   name: 'My-Dataset',
   //   tracklist: myDatasetTracklist,
-  //   parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2] }),
+  //   parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2], links: track[3] }),
   // }
 ];
 
@@ -53,7 +55,7 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
 
   for (const dataset of datasets) {
     for (const rawTrack of dataset.tracklist) {
-      const { title, artistName, genre } = dataset.parser(rawTrack);
+      const { title, artistName, genre, links } = dataset.parser(rawTrack);
 
       if (!artistsMap.has(artistName)) {
         artistsMap.set(artistName, {
@@ -71,6 +73,8 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
          artist.tracks.push({
           title,
           dataset: dataset.name,
+          bandcampUrl: links?.bandcampUrl,
+          spotifyUrl: links?.spotifyUrl,
         });
       }
     }

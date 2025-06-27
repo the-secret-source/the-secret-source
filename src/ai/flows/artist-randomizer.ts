@@ -19,6 +19,8 @@ const RandomArtistOutputSchema = z.object({
   tracks: z.array(z.object({
     title: z.string().describe("The title of the track."),
     dataset: z.string().describe("The dataset the track appeared in."),
+    bandcampUrl: z.string().url().optional().describe('The URL of the track on Bandcamp, if available.'),
+    spotifyUrl: z.string().url().optional().describe('The URL of the track on Spotify, if available.'),
   })).describe('A list of tracks by the artist, including the dataset they appeared in.'),
   bandcampUrl: z.string().optional().describe('The URL of the artist on Bandcamp, if available.'),
   spotifyUrl: z.string().optional().describe('The URL of the artist on Spotify, if available.'),

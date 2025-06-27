@@ -49,7 +49,37 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                 <ul className="space-y-2 text-left">
                   {artist.tracks.map((track, index) => (
                     <li key={index} className="flex items-center justify-between">
-                      <span className="text-muted-foreground">{track.title}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">{track.title}</span>
+                        {track.bandcampUrl && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <a href={track.bandcampUrl} target="_blank" rel="noopener noreferrer" aria-label={`Listen to ${track.title} on Bandcamp`}>
+                                  <BandcampIcon className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Listen on Bandcamp</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                        {track.spotifyUrl && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <a href={track.spotifyUrl} target="_blank" rel="noopener noreferrer" aria-label={`Listen to ${track.title} on Spotify`}>
+                                  <SpotifyIcon className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Listen on Spotify</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
                       <Badge variant="secondary">{track.dataset}</Badge>
                     </li>
                   ))}
