@@ -52,8 +52,8 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12 bg-background text-foreground">
       <div className="w-full max-w-2xl space-y-8">
         <header className="text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold font-headline text-primary">Your App Title</h1>
-          <p className="mt-2 text-lg text-muted-foreground">Your App Subtitle</p>
+          <h1 className="text-4xl sm:text-5xl font-bold font-code text-primary">YOUR APP TITLE</h1>
+          <p className="mt-2 text-lg font-code text-muted-foreground">YOUR APP SUBTITLE</p>
         </header>
 
         <div className="w-full min-h-[300px] flex items-center justify-center">
