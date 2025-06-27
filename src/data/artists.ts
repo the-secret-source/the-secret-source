@@ -113,22 +113,32 @@ function loadAndParseArtists(): Artist[] {
         console.log(`[artists.ts] Adding track "${title}" to artist "${artistName}".`);
         artist.tracks.push(newTrack);
 
+        // --- Populate Artist-Level Links from Track Data ---
+
+        // First, specifically handle inferring the main artist Bandcamp page.
+        // We only want to do this once per artist, from the first track that has a valid link.
+        if (links.bandcampUrl && !artist.bandcampUrl) {
+          try {
+            const url = new URL(links.bandcampUrl);
+            if (url.hostname.endsWith('bandcamp.com')) {
+              const inferredUrl = `${url.protocol}//${url.hostname}`;
+              artist.bandcampUrl = inferredUrl;
+              console.log(`[artists.ts] Inferred and set Bandcamp URL for ${artistName}: ${inferredUrl}`);
+            }
+          } catch (e) {
+            console.error(`[artists.ts] Could not parse URL for inference: ${links.bandcampUrl}`, e);
+          }
+        }
+
+        // Next, copy over all other links from the track to the artist,
+        // but only if the artist doesn't have that link type set yet.
         for (const urlKey in links) {
+          if (urlKey === 'bandcampUrl') {
+            continue; // Already specially handled above
+          }
           if (!artist[urlKey]) {
             const trackUrl = links[urlKey];
-            console.log(`[artists.ts] Checking to see if artist link should be inferred for key: ${urlKey}`);
-            if (urlKey === 'bandcampUrl' && trackUrl) {
-              try {
-                const url = new URL(trackUrl);
-                if (url.hostname.endsWith('bandcamp.com')) {
-                  const inferredUrl = `${url.protocol}//${url.hostname}`;
-                  artist.bandcampUrl = inferredUrl;
-                  console.log(`[artists.ts] Inferred and set Bandcamp URL for ${artistName}: ${inferredUrl}`);
-                }
-              } catch (e) {
-                console.error(`[artists.ts] Could not parse URL for inference: ${trackUrl}`, e);
-              }
-            } else if (trackUrl) {
+            if (trackUrl) {
               artist[urlKey] = trackUrl;
               console.log(`[artists.ts] Set ${urlKey} for ${artistName}: ${trackUrl}`);
             }
