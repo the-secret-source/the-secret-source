@@ -42,7 +42,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         <p className="text-center text-muted-foreground text-lg leading-relaxed">{artist.bio}</p>
 
         {artist.tracks && artist.tracks.length > 0 && (
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-base">Featured Tracks</AccordionTrigger>
               <AccordionContent>
