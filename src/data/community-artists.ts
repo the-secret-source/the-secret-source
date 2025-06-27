@@ -1,4 +1,4 @@
-import type { Artist } from './artists';
+import type { Artist } from '@/lib/types';
 
 /**
  * @deprecated This file is no longer in use. Datasets are now managed in the

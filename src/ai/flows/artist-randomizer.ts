@@ -6,7 +6,8 @@
  * - getRandomArtist - A function that returns a random artist's information.
  */
 
-import { artists, type Artist } from '@/data/artists';
+import { artists } from '@/data/artists';
+import type { Artist } from '@/lib/types';
 
 export async function getRandomArtist(): Promise<Artist> {
   // 1. Select a random artist from the curated list.

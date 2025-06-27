@@ -1,4 +1,4 @@
-import type { Artist } from '@/data/artists';
+import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Globe, Youtube, Github } from 'lucide-react';

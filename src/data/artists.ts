@@ -7,27 +7,10 @@
 import fs from 'fs';
 import path from 'path';
 import Papa from 'papaparse';
+import type { Artist, Track } from '@/lib/types';
 
 // To add a new dataset, import it here.
 // import { myDatasetTracklist } from './datasets/my-dataset';
-
-// Interfaces for unified data structure
-export interface Track {
-  title: string;
-  dataset: string;
-  bandcampUrl?: string;
-  spotifyUrl?: string;
-}
-
-export interface Artist {
-  artistName: string;
-  genre: string;
-  tracks: Track[];
-  bandcampUrl?: string;
-  spotifyUrl?: string;
-  youtubeUrl?: string;
-  otherLinks?: string[];
-}
 
 // --- Dataset Definitions ---
 // Register all datasets here. Each object needs a name and the tracklist data.
