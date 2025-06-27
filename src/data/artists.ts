@@ -20,7 +20,6 @@ const datasetsToParse = [
       const parsed: { [key: string]: any } = {
         title: row.track_title,
         artistName: row.artist_name,
-        genre: row.genre,
         source: row.source,
         links: {},
       };
@@ -67,14 +66,13 @@ function loadAndParseArtists(): Artist[] {
           continue;
         }
         
-        const { title, artistName, genre, source, links } = dataset.parser(rawTrack);
+        const { title, artistName, source, links } = dataset.parser(rawTrack);
         console.log(`[artists.ts] Parsed track data for artist: ${artistName}, title: ${title}`);
 
         if (!artistsMap.has(artistName)) {
           console.log(`[artists.ts] New artist found: ${artistName}. Creating new entry.`);
           artistsMap.set(artistName, {
             artistName,
-            genre,
             tracks: [],
           });
         }

@@ -13,7 +13,6 @@ import {z} from 'genkit';
 
 const GenerateArtistProfileInputSchema = z.object({
   artistName: z.string().describe('The name of the artist.'),
-  artistGenre: z.string().describe('The genre of music the artist performs.'),
 });
 export type GenerateArtistProfileInput = z.infer<typeof GenerateArtistProfileInputSchema>;
 
@@ -32,10 +31,9 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateArtistProfileOutputSchema},
   prompt: `You are a music journalist who writes short bios for artists.
 
-  Given the artist's name and genre, write a one-sentence bio.
+  Given the artist's name, write a one-sentence bio.
 
-  Artist Name: {{artistName}}
-  Genre: {{artistGenre}}`,
+  Artist Name: {{artistName}}`,
 });
 
 const generateArtistProfileFlow = ai.defineFlow(

@@ -37,7 +37,6 @@ export function HomePage() {
         try {
           const links = await findArtistLinks({
             artistName: artistData.artistName,
-            artistGenre: artistData.artistGenre,
           });
           // Merge the newly found links into the artist data
           artistData = { ...artistData, ...links };

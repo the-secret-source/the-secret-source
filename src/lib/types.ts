@@ -10,7 +10,6 @@ export interface Track {
 
 export interface Artist {
   artistName: string;
-  genre: string;
   tracks: Track[];
   bandcampUrl?: string;
   spotifyUrl?: string;

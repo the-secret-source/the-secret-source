@@ -8,7 +8,6 @@ import {z} from 'genkit';
 
 const FindArtistLinksInputSchema = z.object({
   artistName: z.string().describe('The name of the artist.'),
-  artistGenre: z.string().describe('The genre of music the artist performs.'),
 });
 export type FindArtistLinksInput = z.infer<typeof FindArtistLinksInputSchema>;
 
@@ -33,7 +32,6 @@ const prompt = ai.definePrompt({
   Prioritize finding a Bandcamp page. Also look for Spotify and YouTube pages. Only return high-confidence, official links. Do not return links to fan pages, social media profiles (like Twitter or Facebook), or music databases like Discogs.
 
   Artist Name: {{artistName}}
-  Genre: {{artistGenre}}
 
   Return the data in the specified JSON format. If you cannot find a link for a specific platform, omit the field.`,
 });
