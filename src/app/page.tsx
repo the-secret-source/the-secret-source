@@ -24,14 +24,20 @@ export default function Home() {
 
   const datasetCounts = allDatasetNames.reduce((acc, name) => {
     const artistsInDataset = new Set<string>();
+    let tracksInDataset = 0;
     artists.forEach(artist => {
-      if (artist.tracks.some(track => track.dataset === name)) {
+      const artistTracksInDataset = artist.tracks.filter(track => track.dataset === name);
+      if (artistTracksInDataset.length > 0) {
         artistsInDataset.add(artist.artistName);
+        tracksInDataset += artistTracksInDataset.length;
       }
     });
-    acc[name] = artistsInDataset.size;
+    acc[name] = {
+      artists: artistsInDataset.size,
+      tracks: tracksInDataset,
+    };
     return acc;
-  }, {} as Record<string, number>);
+  }, {} as Record<string, { artists: number; tracks: number }>);
 
   const stats = {
     artistCount,

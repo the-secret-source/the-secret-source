@@ -13,7 +13,7 @@ export interface AppSidebarStats {
   artistsWithLinksPercentage: number;
   tracksWithLinks: number;
   tracksWithLinksPercentage: number;
-  datasetCounts: Record<string, number>;
+  datasetCounts: Record<string, { artists: number; tracks: number }>;
 }
 
 interface AppSidebarProps {
@@ -119,7 +119,7 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
                         {name}
                       </Label>
                     </div>
-                    <span className="font-mono text-sm text-sidebar-foreground/70">{stats.datasetCounts[name] ?? 0}</span>
+                    <span className="font-mono text-xs text-sidebar-foreground/70">{stats.datasetCounts[name]?.artists ?? 0} / {stats.datasetCounts[name]?.tracks ?? 0}</span>
                   </div>
                 ))}
               </div>
