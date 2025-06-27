@@ -1,58 +1,15 @@
 import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Globe, Youtube, Github, Music } from 'lucide-react';
+import { Github } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
-import { cn } from '@/lib/utils';
 import { BandcampIcon, SpotifyIcon, DiscogsIcon, AppleMusicIcon } from './icons';
 
 interface ArtistCardProps {
   artist: Artist;
 }
-
-type LinkType = 'direct' | 'streaming' | 'other';
-
-const getLinkCategory = (key: string): LinkType => {
-  const directKeys = ['bandcampUrl', 'discogsUrl'];
-  const streamingKeys = ['spotifyUrl', 'appleMusicUrl'];
-  if (directKeys.includes(key)) return 'direct';
-  if (streamingKeys.includes(key)) return 'streaming';
-  return 'other';
-};
-
-const SocialLink = ({ href, children, label, linkType }: { href: string; children: React.ReactNode, label: string; linkType: LinkType }) => {
-  const colorClass = {
-    direct: 'bg-accent',
-    streaming: 'bg-chart-2',
-    other: 'bg-chart-4'
-  }[linkType];
-
-  return (
-    <div className="flex items-center gap-1.5">
-      <div className={cn("h-2 w-2 shrink-0 rounded-full", colorClass)} />
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={`Visit artist on ${label}`}
-            >
-              {children}
-            </a>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Visit on {label}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-  )
-};
 
 export function ArtistCard({ artist }: ArtistCardProps) {
   return (
@@ -140,43 +97,10 @@ export function ArtistCard({ artist }: ArtistCardProps) {
           </Accordion>
         )}
       </CardContent>
-      <CardFooter className="flex items-center justify-between pt-4 border-t">
-        <div className="flex items-center gap-4 flex-wrap">
-          {artist.bandcampUrl && (
-            <SocialLink href={artist.bandcampUrl} label="Bandcamp" linkType={getLinkCategory('bandcampUrl')}>
-              <BandcampIcon className="h-6 w-6" />
-            </SocialLink>
-          )}
-          {artist.discogsUrl && (
-            <SocialLink href={artist.discogsUrl} label="Discogs" linkType={getLinkCategory('discogsUrl')}>
-              <DiscogsIcon className="h-6 w-6" />
-            </SocialLink>
-          )}
-          {artist.spotifyUrl && (
-            <SocialLink href={artist.spotifyUrl} label="Spotify" linkType={getLinkCategory('spotifyUrl')}>
-              <SpotifyIcon className="h-6 w-6" />
-            </SocialLink>
-          )}
-          {artist.appleMusicUrl && (
-            <SocialLink href={artist.appleMusicUrl} label="Apple Music" linkType={getLinkCategory('appleMusicUrl')}>
-              <AppleMusicIcon className="h-6 w-6" />
-            </SocialLink>
-          )}
-          {artist.youtubeUrl && (
-            <SocialLink href={artist.youtubeUrl} label="YouTube" linkType={getLinkCategory('youtubeUrl')}>
-              <Youtube className="h-6 w-6" />
-            </SocialLink>
-          )}
-          {artist.otherLinks?.map((link, index) => (
-            <SocialLink key={index} href={link} label="their website" linkType={getLinkCategory('otherLinks')}>
-              <Globe className="h-6 w-6" />
-            </SocialLink>
-          ))}
-        </div>
+      <CardFooter className="flex items-center justify-end pt-4 border-t">
         {artist.bandcampUrl ? (
           <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-md">
             <a href={artist.bandcampUrl} target="_blank" rel="noopener noreferrer">
-              <div className="h-2 w-2 mr-2 shrink-0 rounded-full bg-background/70" />
               <BandcampIcon className="mr-2 h-5 w-5" />
               Support on Bandcamp
             </a>
