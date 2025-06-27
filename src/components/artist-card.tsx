@@ -2,7 +2,7 @@ import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Globe, Youtube, Github } from 'lucide-react';
-import { BandcampIcon, SpotifyIcon } from '@/components/icons';
+import { BandcampIcon, SpotifyIcon, DiscogsIcon } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
@@ -100,6 +100,11 @@ export function ArtistCard({ artist }: ArtistCardProps) {
           {artist.spotifyUrl && (
             <SocialLink href={artist.spotifyUrl} label="Spotify">
               <SpotifyIcon className="h-6 w-6" />
+            </SocialLink>
+          )}
+          {artist.discogsUrl && (
+            <SocialLink href={artist.discogsUrl} label="Discogs">
+              <DiscogsIcon className="h-6 w-6" />
             </SocialLink>
           )}
           {artist.otherLinks?.map((link, index) => (

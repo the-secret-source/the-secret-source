@@ -4,6 +4,7 @@ export interface Track {
   source?: string;
   bandcampUrl?: string;
   spotifyUrl?: string;
+  discogsUrl?: string;
 }
 
 export interface Artist {
@@ -13,5 +14,6 @@ export interface Artist {
   bandcampUrl?: string;
   spotifyUrl?: string;
   youtubeUrl?: string;
+  discogsUrl?: string;
   otherLinks?: string[];
 }

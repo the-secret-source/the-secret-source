@@ -26,6 +26,8 @@ const datasetsToParse = [
       source: row.source,
       links: {
         bandcampUrl: row.bandcamp_url || undefined,
+        spotifyUrl: row.spotify_url || undefined,
+        discogsUrl: row.discogs_url || undefined,
       },
     }),
   },
@@ -87,6 +89,8 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
         dataset: dataset.name,
         source: source,
         bandcampUrl: links.bandcampUrl,
+        spotifyUrl: links.spotifyUrl,
+        discogsUrl: links.discogsUrl,
       };
 
       artist.tracks.push(newTrack);
@@ -104,6 +108,11 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
           // Ignore invalid URLs
           console.error(`Could not parse bandcamp URL for track: ${newTrack.bandcampUrl}`);
         }
+      }
+
+      // Infer artist discogsUrl from the first available track discogsUrl
+      if (!artist.discogsUrl && newTrack.discogsUrl) {
+        artist.discogsUrl = newTrack.discogsUrl;
       }
     }
   }
