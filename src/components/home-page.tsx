@@ -8,7 +8,7 @@ import { type Artist } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Github } from 'lucide-react';
 
 export function HomePage() {
   const [artist, setArtist] = useState<Artist | null>(null);
@@ -95,7 +95,7 @@ export function HomePage() {
           ) : null}
         </div>
         
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button onClick={handleNewArtist} disabled={isDiscovering} size="lg" className="shadow-lg">
             {isDiscovering ? (
               <>
@@ -105,6 +105,12 @@ export function HomePage() {
             ) : (
               "Discover New Artist"
             )}
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
+              <Github className="mr-2 h-5 w-5" />
+              Contribute on GitHub
+            </a>
           </Button>
         </div>
       </div>
