@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label";
 export interface AppSidebarStats {
   artistCount: number;
   trackCount: number;
-  artistsWithLinks: number;
-  artistsWithLinksPercentage: number;
-  tracksWithLinks: number;
-  tracksWithLinksPercentage: number;
+  artistsWithPaidLinks: number;
+  artistsWithPaidLinksPercentage: number;
+  tracksWithPaidLinks: number;
+  tracksWithPaidLinksPercentage: number;
   datasetCounts: Record<string, { artists: number; tracks: number }>;
 }
 
@@ -26,7 +26,7 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, withLinksOnly, onWithLinksOnlyToggle }: AppSidebarProps) {
-  const { artistCount, trackCount, artistsWithLinks, artistsWithLinksPercentage, tracksWithLinks, tracksWithLinksPercentage } = stats;
+  const { artistCount, trackCount, artistsWithPaidLinks, artistsWithPaidLinksPercentage, tracksWithPaidLinks, tracksWithPaidLinksPercentage } = stats;
 
   return (
     <Sidebar>
@@ -62,11 +62,11 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
               <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
                   <div className="flex items-center gap-3">
                       <Link className="h-5 w-5 text-sidebar-foreground/70" />
-                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Artists with links</span>
+                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Artists w/ Support Links</span>
                   </div>
-                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{artistsWithLinks}</span>
+                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{artistsWithPaidLinks}</span>
               </div>
-              <Progress value={artistsWithLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
+              <Progress value={artistsWithPaidLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
             </div>
           </SidebarMenuItem>
           <SidebarMenuItem className="pointer-events-none">
@@ -74,11 +74,11 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
               <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
                   <div className="flex items-center gap-3">
                       <Link className="h-5 w-5 text-sidebar-foreground/70" />
-                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Tracks with links</span>
+                      <span className="text-sidebar-foreground/90 text-sm group-data-[collapsible=icon]:hidden">Tracks w/ Support Links</span>
                   </div>
-                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{tracksWithLinks}</span>
+                  <span className="font-mono font-semibold group-data-[collapsible=icon]:hidden">{tracksWithPaidLinks}</span>
               </div>
-              <Progress value={tracksWithLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
+              <Progress value={tracksWithPaidLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
             </div>
           </SidebarMenuItem>
 

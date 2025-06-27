@@ -8,19 +8,21 @@ export default function Home() {
   const artistCount = artists.length;
   const trackCount = artists.reduce((sum, artist) => sum + artist.tracks.length, 0);
 
-  const artistsWithLinks = artists.filter(artist => {
-    const hasArtistPageLink = artist.bandcampUrl || artist.spotifyUrl || artist.youtubeUrl || artist.discogsUrl || (artist.otherLinks && artist.otherLinks.length > 0);
-    const hasTrackLink = artist.tracks.some(track => track.bandcampUrl || track.spotifyUrl);
+  const paidLinkKeys = ['bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl'];
+
+  const artistsWithPaidLinks = artists.filter(artist => {
+    const hasArtistPageLink = paidLinkKeys.some(key => !!artist[key]);
+    const hasTrackLink = artist.tracks.some(track => paidLinkKeys.some(key => !!track[key]));
     return hasArtistPageLink || hasTrackLink;
   }).length;
+
+  const artistsWithPaidLinksPercentage = artistCount > 0 ? Math.round((artistsWithPaidLinks / artistCount) * 100) : 0;
   
-  const artistsWithLinksPercentage = artistCount > 0 ? Math.round((artistsWithLinks / artistCount) * 100) : 0;
-  
-  const tracksWithLinks = artists.reduce((sum, artist) => {
-      return sum + artist.tracks.filter(track => track.bandcampUrl || track.spotifyUrl).length;
+  const tracksWithPaidLinks = artists.reduce((sum, artist) => {
+    return sum + artist.tracks.filter(track => paidLinkKeys.some(key => !!track[key])).length;
   }, 0);
 
-  const tracksWithLinksPercentage = trackCount > 0 ? Math.round((tracksWithLinks / trackCount) * 100) : 0;
+  const tracksWithPaidLinksPercentage = trackCount > 0 ? Math.round((tracksWithPaidLinks / trackCount) * 100) : 0;
 
   const datasetCounts = allDatasetNames.reduce((acc, name) => {
     const artistsInDataset = new Set<string>();
@@ -42,10 +44,10 @@ export default function Home() {
   const stats = {
     artistCount,
     trackCount,
-    artistsWithLinks,
-    artistsWithLinksPercentage,
-    tracksWithLinks,
-    tracksWithLinksPercentage,
+    artistsWithPaidLinks,
+    artistsWithPaidLinksPercentage,
+    tracksWithPaidLinks,
+    tracksWithPaidLinksPercentage,
     datasetCounts,
   };
 
