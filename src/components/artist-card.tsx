@@ -1,7 +1,7 @@
 import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Github, Music, Youtube } from 'lucide-react';
+import { Music, Youtube } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
@@ -13,6 +13,7 @@ import AppleMusicIcon from '@/assets/icons/apple-music.svg';
 import BandcampIcon from '@/assets/icons/bandcamp.svg';
 import DiscogsIcon from '@/assets/icons/discogs.svg';
 import SpotifyIcon from '@/assets/icons/spotify.svg';
+import GithubIcon from '@/assets/icons/github.svg';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -107,7 +108,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         ) : (
           <Button asChild variant="outline">
             <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <Github className="mr-2 h-4 w-4" />
+              <GithubIcon className="mr-2 h-4 w-4" />
               Know this artist? Contribute
             </a>
           </Button>
