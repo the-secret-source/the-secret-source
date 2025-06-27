@@ -99,6 +99,34 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                             </Tooltip>
                           </TooltipProvider>
                         )}
+                        {track.appleMusicUrl && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <a href={track.appleMusicUrl} target="_blank" rel="noopener noreferrer" aria-label={`Listen to ${track.title} on Apple Music`}>
+                                  <AppleMusicIcon className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Listen on Apple Music</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                        {track.discogsUrl && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <a href={track.discogsUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${track.title} on Discogs`}>
+                                  <DiscogsIcon className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>View on Discogs</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary">{track.dataset}</Badge>
