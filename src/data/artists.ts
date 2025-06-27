@@ -118,12 +118,6 @@ function loadAndParseArtists(): Artist[] {
         // doesn't have that link type set yet. This ensures the first link of
         // a certain type found becomes the artist's primary link for that type.
         for (const urlKey in links) {
-          // We do not infer the main artist bandcamp URL from a track.
-          // The "Support on Bandcamp" button should only appear if a specific
-          // artist-level bandcampUrl is provided in the dataset.
-          if (urlKey === 'bandcampUrl') {
-            continue;
-          }
           if (!artist[urlKey]) {
             const trackUrl = links[urlKey];
             if (trackUrl) {
