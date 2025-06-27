@@ -11,27 +11,41 @@ import type { Artist, Track } from '@/lib/types';
 // --- Caching ---
 let cachedArtists: Artist[] | null = null;
 
+// --- Generic Parser ---
+/**
+ * A generic parser for CSV rows that conform to the expected format.
+ * @param row - A row object from PapaParse.
+ * @returns A structured object with title, artistName, source, and links.
+ */
+const genericCsvParser = (row: any) => {
+  const parsed: { [key: string]: any } = {
+    title: row.track_title,
+    artistName: row.artist_name,
+    source: row.source,
+    links: {},
+  };
+
+  for (const key in row) {
+    if (key.endsWith('_url') && row[key]) {
+      const camelCaseKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+      parsed.links[camelCaseKey] = row[key];
+    }
+  }
+  return parsed;
+};
+
+
 // --- Dataset Definitions ---
 const datasetsToParse = [
   {
     name: 'MUSDB-18',
     filePath: 'datasets/musdb-18.csv',
-    parser: (row: any) => {
-      const parsed: { [key: string]: any } = {
-        title: row.track_title,
-        artistName: row.artist_name,
-        source: row.source,
-        links: {},
-      };
-
-      for (const key in row) {
-        if (key.endsWith('_url') && row[key]) {
-          const camelCaseKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
-          parsed.links[camelCaseKey] = row[key];
-        }
-      }
-      return parsed;
-    },
+    parser: genericCsvParser,
+  },
+  {
+    name: 'MedleyDB',
+    filePath: 'datasets/medleydb.csv',
+    parser: genericCsvParser,
   },
 ];
 
@@ -121,7 +135,11 @@ function loadAndParseArtists(): Artist[] {
         }
       }
     } catch(e) {
-      console.error(`[artists.ts] Failed to read or process dataset: ${dataset.name}`, e);
+      if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
+        console.warn(`[artists.ts] Dataset file not found, skipping: ${dataset.name} at ${dataset.filePath}`);
+      } else {
+        console.error(`[artists.ts] Failed to read or process dataset: ${dataset.name}`, e);
+      }
     }
   }
 
