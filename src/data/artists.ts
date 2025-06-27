@@ -42,26 +42,36 @@ const datasetsToParse = [
  * @returns An array of artists.
  */
 function loadAndParseArtists(): Artist[] {
+  console.log('[artists.ts] Starting to load and parse artist data...');
   const artistsMap = new Map<string, Artist>();
 
   for (const dataset of datasetsToParse) {
+    console.log(`[artists.ts] Processing dataset: ${dataset.name}`);
     try {
       const absolutePath = path.join(process.cwd(), 'src/data', dataset.filePath);
+      console.log(`[artists.ts] Reading file from absolute path: ${absolutePath}`);
       const fileContent = fs.readFileSync(absolutePath, 'utf8');
+      console.log(`[artists.ts] Successfully read file. Content length: ${fileContent.length}`);
       
       const parsedCsv = Papa.parse(fileContent, {
         header: true,
         skipEmptyLines: 'greedy',
       });
+      console.log(`[artists.ts] Parsed CSV data. Found ${parsedCsv.data.length} rows.`);
+
 
       for (const rawTrack of parsedCsv.data as any[]) {
+        console.log('[artists.ts] Processing raw row:', rawTrack);
         if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
+          console.log('[artists.ts] Skipping invalid row:', rawTrack);
           continue;
         }
         
         const { title, artistName, genre, source, links } = dataset.parser(rawTrack);
+        console.log(`[artists.ts] Parsed track data for artist: ${artistName}, title: ${title}`);
 
         if (!artistsMap.has(artistName)) {
+          console.log(`[artists.ts] New artist found: ${artistName}. Creating new entry.`);
           artistsMap.set(artistName, {
             artistName,
             genre,
@@ -77,34 +87,40 @@ function loadAndParseArtists(): Artist[] {
           source: source,
           ...links,
         };
-
+        
+        console.log(`[artists.ts] Adding track "${title}" to artist "${artistName}".`);
         artist.tracks.push(newTrack);
 
         for (const urlKey in links) {
           if (!artist[urlKey]) {
             const trackUrl = links[urlKey];
+            console.log(`[artists.ts] Checking to see if artist link should be inferred for key: ${urlKey}`);
             if (urlKey === 'bandcampUrl' && trackUrl) {
               try {
                 const url = new URL(trackUrl);
                 if (url.hostname.endsWith('bandcamp.com')) {
-                  artist.bandcampUrl = `${url.protocol}//${url.hostname}`;
+                  const inferredUrl = `${url.protocol}//${url.hostname}`;
+                  artist.bandcampUrl = inferredUrl;
+                  console.log(`[artists.ts] Inferred and set Bandcamp URL for ${artistName}: ${inferredUrl}`);
                 }
               } catch (e) {
-                // Ignore invalid URLs
+                console.error(`[artists.ts] Could not parse URL for inference: ${trackUrl}`, e);
               }
             } else if (trackUrl) {
               artist[urlKey] = trackUrl;
+              console.log(`[artists.ts] Set ${urlKey} for ${artistName}: ${trackUrl}`);
             }
           }
         }
       }
     } catch(e) {
-      console.error(`Failed to read or process dataset: ${dataset.name}`, e);
-      // If a file fails to parse, we'll continue with what we have, but the error will be logged.
+      console.error(`[artists.ts] Failed to read or process dataset: ${dataset.name}`, e);
     }
   }
 
-  return Array.from(artistsMap.values());
+  const finalArtists = Array.from(artistsMap.values());
+  console.log(`[artists.ts] Finished parsing. Total unique artists found: ${finalArtists.length}`);
+  return finalArtists;
 }
 
 
@@ -113,9 +129,13 @@ function loadAndParseArtists(): Artist[] {
  * @returns An array of artists.
  */
 export function getArtists(): Artist[] {
+    console.log('[artists.ts] getArtists() called.');
     if (cachedArtists) {
+        console.log(`[artists.ts] Returning cached artists. Count: ${cachedArtists.length}`);
         return cachedArtists;
     }
+    console.log('[artists.ts] No cached artists found. Loading from source.');
     cachedArtists = loadAndParseArtists();
+    console.log(`[artists.ts] Caching and returning new artists. Count: ${cachedArtists.length}`);
     return cachedArtists;
 }
