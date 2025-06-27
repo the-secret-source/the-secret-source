@@ -89,16 +89,16 @@ export function HomePage() {
               "Discover New Artist"
             )}
           </Button>
-          <Button asChild variant="outline" size="lg">
-            <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <Github className="mr-2 h-5 w-5" />
-              Contribute on GitHub
-            </a>
-          </Button>
         </div>
       </div>
-      <footer className="mt-auto py-6 text-center text-sm text-muted-foreground">
+      <footer className="mt-auto flex flex-col items-center gap-4 py-6 text-center text-sm text-muted-foreground">
         {year && <p>&copy; {year} The Secret Source. All Rights Reserved.</p>}
+        <Button asChild variant="outline" size="sm">
+          <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
+            <Github className="mr-2 h-4 w-4" />
+            Contribute on GitHub
+          </a>
+        </Button>
       </footer>
     </div>
   );
