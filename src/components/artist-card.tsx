@@ -43,7 +43,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
-              <IconComponent className="h-6 w-6" />
+              <IconComponent className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors" />
             </a>
           </TooltipTrigger>
           <TooltipContent>
@@ -62,15 +62,15 @@ export function ArtistCard({ artist }: ArtistCardProps) {
       <CardContent>
         {artist.tracks && artist.tracks.length > 0 && (
           <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
-            <AccordionItem value="item-1">
+            <AccordionItem value="item-1" className="border-b-0">
               <AccordionTrigger className="text-base">Featured Tracks</AccordionTrigger>
               <AccordionContent>
-                <ul className="space-y-2 text-left">
+                <ul className="text-left divide-y divide-border">
                   {artist.tracks.map((track, index) => (
-                    <li key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-muted-foreground">{track.title}</span>
-                        <div className="flex items-center gap-4">
+                    <li key={index} className="flex flex-col py-3 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="font-medium text-foreground">{track.title}</span>
+                      <div className="flex w-full items-center justify-between pt-3 sm:w-auto sm:pt-0 sm:justify-end sm:gap-6">
+                        <div className="flex items-center gap-5">
                           {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
                           {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
                           {track.appleMusicUrl && renderLink(track.appleMusicUrl, 'appleMusicUrl')}
@@ -78,10 +78,10 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                           {track.youtubeUrl && renderLink(track.youtubeUrl, 'youtubeUrl')}
                           {track.soundcloudUrl && renderLink(track.soundcloudUrl, 'soundcloudUrl')}
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2 flex-wrap justify-end">
-                        <Badge variant="secondary" className="whitespace-nowrap">{track.dataset}</Badge>
-                        {track.source && <Badge variant="outline" className="whitespace-nowrap">{track.source}</Badge>}
+                        <div className="flex flex-shrink-0 items-center gap-2 flex-wrap justify-end">
+                          <Badge variant="secondary" className="whitespace-nowrap">{track.dataset}</Badge>
+                          {track.source && <Badge variant="outline" className="whitespace-nowrap">{track.source}</Badge>}
+                        </div>
                       </div>
                     </li>
                   ))}
