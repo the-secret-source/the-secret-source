@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
-import Image from 'next/image';
+import { FaBandcamp, FaSpotify, FaApple, FaYoutube, FaSoundcloud, FaGithub, FaLink } from 'react-icons/fa';
+import { SiDiscogs } from 'react-icons/si';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -21,18 +22,28 @@ const linkLabels: Record<string, string> = {
   mixRescueUrl: 'Mix Rescue',
 };
 
-export function ArtistCard({ artist }: ArtistCardProps) {
+const iconMap: Record<string, React.ElementType> = {
+  bandcampUrl: FaBandcamp,
+  spotifyUrl: FaSpotify,
+  appleMusicUrl: FaApple,
+  discogsUrl: SiDiscogs,
+  youtubeUrl: FaYoutube,
+  soundcloudUrl: FaSoundcloud,
+  weathervaneUrl: FaLink,
+  mixRescueUrl: FaLink,
+};
 
+export function ArtistCard({ artist }: ArtistCardProps) {
   const renderLink = (url: string, key: string) => {
     const label = linkLabels[key] || 'Listen';
-    const iconName = key.replace('Url', '');
+    const IconComponent = iconMap[key] || FaLink;
 
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`} className="block h-5 w-5 relative">
-              <Image src={`/assets/icons/${iconName}.png`} alt={`${label} icon`} layout="fill" objectFit="contain" />
+            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
+              <IconComponent className="h-5 w-5" />
             </a>
           </TooltipTrigger>
           <TooltipContent>
@@ -40,8 +51,8 @@ export function ArtistCard({ artist }: ArtistCardProps) {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    )
-  }
+    );
+  };
   
   return (
     <Card className="w-full max-w-2xl animate-in fade-in-0 duration-700 shadow-xl">
@@ -90,7 +101,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         ) : (
           <Button asChild variant="outline">
             <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <Image src="/assets/icons/github.png" alt="GitHub icon" width={20} height={20} />
+              <FaGithub />
               Know this artist? Contribute
             </a>
           </Button>
