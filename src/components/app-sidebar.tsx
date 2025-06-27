@@ -119,7 +119,7 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
                         {name}
                       </Label>
                     </div>
-                    <span className="font-mono text-xs text-sidebar-foreground/70">{stats.datasetCounts[name]?.artists ?? 0} / {stats.datasetCounts[name]?.tracks ?? 0}</span>
+                    <span className="font-mono text-xs text-sidebar-foreground/70">{stats.datasetCounts[name]?.artists ?? 0}A / {stats.datasetCounts[name]?.tracks ?? 0}T</span>
                   </div>
                 ))}
               </div>

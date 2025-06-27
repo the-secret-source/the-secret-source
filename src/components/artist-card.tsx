@@ -2,34 +2,38 @@ import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Globe, Youtube, Github } from 'lucide-react';
-import { BandcampIcon, SpotifyIcon, DiscogsIcon } from '@/components/icons';
+import { BandcampIcon, SpotifyIcon, DiscogsIcon, AppleMusicIcon } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
+import { cn } from '@/lib/utils';
 
 interface ArtistCardProps {
   artist: Artist;
 }
 
-const SocialLink = ({ href, children, label }: { href: string; children: React.ReactNode, label: string }) => (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-muted-foreground hover:text-foreground transition-colors"
-          aria-label={`Visit artist on ${label}`}
-        >
-          {children}
-        </a>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>Visit on {label}</p>
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
+const SocialLink = ({ href, children, label, linkType }: { href: string; children: React.ReactNode, label: string; linkType: 'paid' | 'other' }) => (
+  <div className="flex items-center gap-1.5">
+    <div className={cn("h-2 w-2 shrink-0 rounded-full", linkType === 'paid' ? 'bg-accent' : 'bg-yellow-400')} />
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label={`Visit artist on ${label}`}
+          >
+            {children}
+          </a>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Visit on {label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  </div>
 );
 
 export function ArtistCard({ artist }: ArtistCardProps) {
@@ -90,44 +94,62 @@ export function ArtistCard({ artist }: ArtistCardProps) {
           </Accordion>
         )}
       </CardContent>
-      <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
-        <div className="flex items-center gap-4">
-          {artist.youtubeUrl && (
-            <SocialLink href={artist.youtubeUrl} label="YouTube">
-              <Youtube className="h-6 w-6" />
-            </SocialLink>
+      <CardFooter className="flex flex-col items-center justify-between gap-4 pt-4">
+        <div className="flex w-full flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {artist.youtubeUrl && (
+              <SocialLink href={artist.youtubeUrl} label="YouTube" linkType="other">
+                <Youtube className="h-6 w-6" />
+              </SocialLink>
+            )}
+            {artist.spotifyUrl && (
+              <SocialLink href={artist.spotifyUrl} label="Spotify" linkType="paid">
+                <SpotifyIcon className="h-6 w-6" />
+              </SocialLink>
+            )}
+            {artist.appleMusicUrl && (
+              <SocialLink href={artist.appleMusicUrl} label="Apple Music" linkType="paid">
+                <AppleMusicIcon className="h-6 w-6" />
+              </SocialLink>
+            )}
+            {artist.discogsUrl && (
+              <SocialLink href={artist.discogsUrl} label="Discogs" linkType="paid">
+                <DiscogsIcon className="h-6 w-6" />
+              </SocialLink>
+            )}
+            {artist.otherLinks?.map((link, index) => (
+              <SocialLink key={index} href={link} label="their website" linkType="other">
+                <Globe className="h-6 w-6" />
+              </SocialLink>
+            ))}
+          </div>
+          {artist.bandcampUrl ? (
+            <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-md">
+              <a href={artist.bandcampUrl} target="_blank" rel="noopener noreferrer">
+                <div className="h-2 w-2 mr-1 shrink-0 rounded-full bg-white/80" />
+                <BandcampIcon className="mr-2 h-5 w-5" />
+                Support on Bandcamp
+              </a>
+            </Button>
+          ) : (
+            <Button asChild variant="outline">
+              <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
+                <Github className="mr-2 h-4 w-4" />
+                Know this artist? Contribute
+              </a>
+            </Button>
           )}
-          {artist.spotifyUrl && (
-            <SocialLink href={artist.spotifyUrl} label="Spotify">
-              <SpotifyIcon className="h-6 w-6" />
-            </SocialLink>
-          )}
-          {artist.discogsUrl && (
-            <SocialLink href={artist.discogsUrl} label="Discogs">
-              <DiscogsIcon className="h-6 w-6" />
-            </SocialLink>
-          )}
-          {artist.otherLinks?.map((link, index) => (
-            <SocialLink key={index} href={link} label="their website">
-              <Globe className="h-6 w-6" />
-            </SocialLink>
-          ))}
         </div>
-        {artist.bandcampUrl ? (
-          <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-md">
-            <a href={artist.bandcampUrl} target="_blank" rel="noopener noreferrer">
-              <BandcampIcon className="mr-2 h-5 w-5" />
-              Support on Bandcamp
-            </a>
-          </Button>
-        ) : (
-          <Button asChild variant="outline">
-            <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <Github className="mr-2 h-4 w-4" />
-              Know this artist? Contribute
-            </a>
-          </Button>
-        )}
+        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-2 border-t w-full">
+            <div className="flex items-center gap-1.5">
+                <div className="h-2 w-2 rounded-full bg-accent" />
+                <span>Direct Support</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+                <div className="h-2 w-2 rounded-full bg-yellow-400" />
+                <span>General Link</span>
+            </div>
+        </div>
       </CardFooter>
     </Card>
   );
