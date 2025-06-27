@@ -68,7 +68,6 @@ function loadAndParseArtists(): Artist[] {
   const artistsMap = new Map<string, Artist>();
 
   for (const dataset of datasetsToParse) {
-    console.log(`[artists.ts] Processing dataset: ${dataset.name}`);
     try {
       const absolutePath = path.join(process.cwd(), 'src/data', dataset.filePath);
       const fileContent = fs.readFileSync(absolutePath, 'utf8');
@@ -78,22 +77,13 @@ function loadAndParseArtists(): Artist[] {
         skipEmptyLines: 'greedy',
         trimHeaders: true,
       });
-      console.log(`[artists.ts] Parsed CSV for ${dataset.name}. Found ${parsedCsv.data.length} rows.`);
-
 
       for (const rawTrack of parsedCsv.data as any[]) {
         if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
             continue;
         }
         
-        console.log('\n[artists.ts] ----- Processing Raw Row -----');
-        console.log('[artists.ts] Raw Row Data:', JSON.stringify(rawTrack));
-
         const { title, artistName, source, links } = dataset.parser(rawTrack);
-        
-        console.log(`[artists.ts] Parsed artist: "${artistName}", title: "${title}"`);
-        console.log('[artists.ts] Parsed Links Object:', JSON.stringify(links));
-
 
         if (!artistsMap.has(artistName)) {
             artistsMap.set(artistName, {
@@ -112,7 +102,6 @@ function loadAndParseArtists(): Artist[] {
           source: source,
           ...links,
         };
-        console.log('[artists.ts] Created new track object:', JSON.stringify(newTrack));
         
         // --- Artist-level Link Inference (Without modifying the track) ---
         
@@ -124,7 +113,6 @@ function loadAndParseArtists(): Artist[] {
             // This creates the base URL, e.g., https://artist.bandcamp.com
             const artistBandcampUrl = `${url.protocol}//${url.hostname}`;
             artist.bandcampUrl = artistBandcampUrl;
-            console.log(`[artists.ts] Inferred artist Bandcamp URL for ${artistName}: ${artistBandcampUrl}`);
           } catch (e) {
             console.warn(`[artists.ts] Invalid Bandcamp URL for ${artistName}, copying as-is: ${newTrack.bandcampUrl}`);
             artist.bandcampUrl = newTrack.bandcampUrl;
@@ -133,19 +121,15 @@ function loadAndParseArtists(): Artist[] {
         
         // 2. Copy other links from the track to the artist, only if not already present on the artist.
         for (const key in links) {
-          // We already handled bandcampUrl separately.
           if (key === 'bandcampUrl') continue;
           
           if (!artist[key]) {
             artist[key] = links[key];
-            console.log(`[artists.ts] Copied '${key}' to artist ${artistName}`);
           }
         }
         
         // Add the fully-formed, original track to the artist's track list.
         artist.tracks.push(newTrack);
-        console.log(newTrack)
-        console.log(`[artists.ts] Pushed track to artist. Total tracks for ${artistName}: ${artist.tracks.length}`);
       }
     } catch(e) {
       if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -168,14 +152,9 @@ function loadAndParseArtists(): Artist[] {
  * @returns An array of artists.
  */
 export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[] }): Artist[] {
-    console.log('[artists.ts] getArtists() called with filters:', filters);
-
     if (!cachedArtists || cachedArtists.length === 0) {
         console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
         cachedArtists = loadAndParseArtists();
-        console.log(`[artists.ts] Caching new artists. Count: ${cachedArtists.length}`);
-    } else {
-      console.log(`[artists.ts] Using cached artists. Count: ${cachedArtists.length}`);
     }
 
     let artistsToFilter = cachedArtists;
@@ -185,7 +164,6 @@ export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[]
       if (filters.linkTypes.length === 0) {
         return []; // Return empty if no link types are selected
       }
-      console.log('[artists.ts] Filtering for artists by link types:', filters.linkTypes);
       artistsToFilter = artistsToFilter.filter(artist => {
         // Check if the artist or any of their tracks has at least one of the selected link types
         const hasRequiredLink = (obj: any): boolean => {
@@ -199,13 +177,10 @@ export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[]
         
         return hasRequiredLink(artist) || artist.tracks.some(hasRequiredLink);
       });
-      console.log(`[artists.ts] After link type filtering: ${artistsToFilter.length} artists remain.`);
     }
 
     // Filter by dataset if provided
     if (filters?.datasets && filters.datasets.length > 0 && filters.datasets.length < getDatasetNames().length) {
-      console.log(`[artists.ts] Filtering artists by datasets: ${filters.datasets.join(', ')}`);
-
       const filteredByDataset: Artist[] = [];
       for (const artist of artistsToFilter) {
         const filteredTracks = artist.tracks.filter(track => filters.datasets!.includes(track.dataset));
@@ -217,9 +192,7 @@ export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[]
         }
       }
       artistsToFilter = filteredByDataset;
-      console.log(`[artists.ts] After dataset filtering: ${artistsToFilter.length} artists remain.`);
     }
     
-    console.log(`[artists.ts] Returning ${artistsToFilter.length} artists.`);
     return artistsToFilter;
 }
