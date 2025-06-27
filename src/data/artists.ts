@@ -23,6 +23,7 @@ const datasetsToParse = [
       title: row.track_title,
       artistName: row.artist_name,
       genre: row.genre,
+      source: row.source,
       links: {
         bandcampUrl: row.bandcamp_url || undefined,
         spotifyUrl: row.spotify_url || undefined,
@@ -37,6 +38,7 @@ const datasetsToParse = [
   //     title: row.track_title,
   //     artistName: row.artist_name,
   //     genre: row.genre,
+  //     source: row.source,
   //     links: {
   //       bandcampUrl: row.bandcamp_url || undefined,
   //       spotifyUrl: row.spotify_url || undefined
@@ -63,7 +65,7 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
     });
 
     for (const rawTrack of parsedCsv.data as any[]) {
-      const { title, artistName, genre, links } = dataset.parser(rawTrack);
+      const { title, artistName, genre, source, links } = dataset.parser(rawTrack);
 
       if (!artistName) continue;
 
@@ -82,7 +84,7 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
       if (!artist.tracks.some((t) => t.title === title)) {
         artist.tracks.push({
           title,
-          dataset: dataset.name,
+          dataset: source || dataset.name,
           bandcampUrl: links?.bandcampUrl,
           spotifyUrl: links?.spotifyUrl,
         });
