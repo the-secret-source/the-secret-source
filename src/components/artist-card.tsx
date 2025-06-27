@@ -1,16 +1,63 @@
 import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Github, Music, Apple, Disc } from 'lucide-react';
+import { Github, Music, Youtube } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
+import { AppleMusicIcon, BandcampIcon, DiscogsIcon, SpotifyIcon } from '@/icons';
 
 interface ArtistCardProps {
   artist: Artist;
 }
 
+const iconMap: Record<string, React.ElementType> = {
+  bandcampUrl: BandcampIcon,
+  spotifyUrl: SpotifyIcon,
+  appleMusicUrl: AppleMusicIcon,
+  discogsUrl: DiscogsIcon,
+  youtubeUrl: Youtube,
+  soundcloudUrl: Music,
+};
+
+const linkLabels: Record<string, string> = {
+  bandcampUrl: 'Bandcamp',
+  spotifyUrl: 'Spotify',
+  appleMusicUrl: 'Apple Music',
+  discogsUrl: 'Discogs',
+  youtubeUrl: 'YouTube',
+  soundcloudUrl: 'SoundCloud',
+  weathervaneUrl: 'Weathervane Music',
+  mixRescueUrl: 'MixRescue',
+};
+
+const linkOrder = [
+  'bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl', 
+  'youtubeUrl', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl', 'otherLinks'
+];
+
 export function ArtistCard({ artist }: ArtistCardProps) {
+
+  const renderLink = (url: string, key: string) => {
+    const Icon = iconMap[key] || Music;
+    const label = linkLabels[key] || 'Listen';
+
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
+              <Icon className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+            </a>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{label}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  }
+  
   return (
     <Card className="w-full max-w-2xl animate-in fade-in-0 duration-700 shadow-xl">
       <CardHeader className="text-center pb-2">
@@ -25,64 +72,16 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                 <ul className="space-y-2 text-left">
                   {artist.tracks.map((track, index) => (
                     <li key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <span className="text-muted-foreground">{track.title}</span>
-                        {track.bandcampUrl && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <a href={track.bandcampUrl} target="_blank" rel="noopener noreferrer" aria-label={`Listen to ${track.title} on Bandcamp`}>
-                                  <Music className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
-                                </a>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Listen on Bandcamp</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        {track.spotifyUrl && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <a href={track.spotifyUrl} target="_blank" rel="noopener noreferrer" aria-label={`Listen to ${track.title} on Spotify`}>
-                                  <Music className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
-                                </a>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Listen on Spotify</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        {track.appleMusicUrl && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <a href={track.appleMusicUrl} target="_blank" rel="noopener noreferrer" aria-label={`Listen to ${track.title} on Apple Music`}>
-                                  <Apple className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
-                                </a>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Listen on Apple Music</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        {track.discogsUrl && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <a href={track.discogsUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${track.title} on Discogs`}>
-                                  <Disc className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
-                                </a>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>View on Discogs</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
+                          {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
+                          {track.appleMusicUrl && renderLink(track.appleMusicUrl, 'appleMusicUrl')}
+                          {track.discogsUrl && renderLink(track.discogsUrl, 'discogsUrl')}
+                          {track.youtubeUrl && renderLink(track.youtubeUrl, 'youtubeUrl')}
+                          {track.soundcloudUrl && renderLink(track.soundcloudUrl, 'soundcloudUrl')}
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary">{track.dataset}</Badge>
