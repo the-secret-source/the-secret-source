@@ -9,7 +9,11 @@
 import { artists } from '@/data/artists';
 import type { Artist } from '@/lib/types';
 
-export async function getRandomArtist(): Promise<Artist> {
+export async function getRandomArtist(): Promise<Artist | null> {
+  if (!artists || artists.length === 0) {
+    console.error("Artist data is empty. Cannot select a random artist.");
+    return null;
+  }
   // 1. Select a random artist from the curated list.
   const randomIndex = Math.floor(Math.random() * artists.length);
   const selectedArtist = artists[randomIndex];

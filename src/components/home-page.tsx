@@ -25,6 +25,10 @@ export function HomePage() {
       // First, get a random artist from the local dataset
       let artistData = await getRandomArtist();
 
+      if (!artistData) {
+        throw new Error("No artist data could be loaded. The dataset might be empty or invalid.");
+      }
+
       // If the artist data from the file doesn't have links, search for them.
       const hasLinks = artistData.bandcampUrl || artistData.spotifyUrl || artistData.youtubeUrl || (artistData.otherLinks && artistData.otherLinks.length > 0);
 
@@ -43,8 +47,8 @@ export function HomePage() {
       }
       
       setArtist(artistData);
-    } catch (e) {
-      const errorMessage = "Failed to fetch artist. Please try again.";
+    } catch (e: any) {
+      const errorMessage = e.message || "Failed to fetch artist. Please try again.";
       setError(errorMessage);
       toast({
         variant: 'destructive',
