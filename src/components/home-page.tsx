@@ -9,6 +9,7 @@ import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';
 import { Loader2 } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 interface HomePageProps {
   selectedDatasets: string[];
@@ -90,6 +91,9 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12">
+      <div className="fixed bottom-5 right-5 z-10 md:hidden">
+        <SidebarTrigger className="h-14 w-14 rounded-full shadow-lg" />
+      </div>
       <div className="w-full max-w-2xl space-y-8">
         <header className="text-center">
           <h1 className="text-4xl sm:text-5xl font-bold font-code text-primary">the secret source</h1>

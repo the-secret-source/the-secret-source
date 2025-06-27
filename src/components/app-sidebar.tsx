@@ -67,7 +67,9 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
         <h2 className="pl-2 text-xl font-semibold text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
           Stats
         </h2>
-        <SidebarTrigger />
+        <div className="hidden md:block">
+          <SidebarTrigger />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
