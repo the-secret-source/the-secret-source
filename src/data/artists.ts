@@ -78,6 +78,7 @@ function loadAndParseArtists(): Artist[] {
       const parsedCsv = Papa.parse(fileContent, {
         header: true,
         skipEmptyLines: 'greedy',
+        trimHeaders: true,
       });
       console.log(`[artists.ts] Parsed CSV data. Found ${parsedCsv.data.length} rows.`);
 
