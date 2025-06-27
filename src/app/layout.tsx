@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Your App Title',
-  description: 'Your App Description',
+  title: 'the secret source',
+  description: 'supporting the artists whose works have made our works possible',
 };
 
 export default function RootLayout({
