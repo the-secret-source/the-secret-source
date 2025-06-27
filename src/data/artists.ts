@@ -24,8 +24,9 @@ const datasetsToParse = [
       artistName: row.artist_name,
       genre: row.genre,
       source: row.source,
-      // Links are now found by the AI, so they are not parsed from the CSV.
-      links: {},
+      links: {
+        bandcampUrl: row.bandcamp_url || undefined,
+      },
     }),
   },
   // Example for adding another dataset:
@@ -68,7 +69,7 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
         continue;
       }
       
-      const { title, artistName, genre, source } = dataset.parser(rawTrack);
+      const { title, artistName, genre, source, links } = dataset.parser(rawTrack);
 
       if (!artistsMap.has(artistName)) {
         artistsMap.set(artistName, {
@@ -81,12 +82,29 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
 
       const artist = artistsMap.get(artistName)!;
 
-      // Add the track without de-duplication to ensure all 150 are included.
-      artist.tracks.push({
+      const newTrack: Track = {
         title,
         dataset: dataset.name,
         source: source,
-      });
+        bandcampUrl: links.bandcampUrl,
+      };
+
+      artist.tracks.push(newTrack);
+
+      // Infer artist bandcampUrl from the first available track bandcampUrl
+      if (!artist.bandcampUrl && newTrack.bandcampUrl) {
+        try {
+          const url = new URL(newTrack.bandcampUrl);
+          if (url.hostname.endsWith('bandcamp.com')) {
+             // From: https://artist.bandcamp.com/track/song-title
+             // To:   https://artist.bandcamp.com
+            artist.bandcampUrl = `${url.protocol}//${url.hostname}`;
+          }
+        } catch (e) {
+          // Ignore invalid URLs
+          console.error(`Could not parse bandcamp URL for track: ${newTrack.bandcampUrl}`);
+        }
+      }
     }
   }
 
