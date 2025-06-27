@@ -2,7 +2,7 @@
 
 import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail, SidebarSeparator, SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
 import { Progress } from "@/components/ui/progress";
-import { Music, Users, Link, Filter } from "lucide-react";
+import { Music, Users, Link, Filter, HelpCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
@@ -122,6 +122,23 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
                     <span className="font-mono text-xs text-sidebar-foreground/70">{stats.datasetCounts[name]?.artists ?? 0}A / {stats.datasetCounts[name]?.tracks ?? 0}T</span>
                   </div>
                 ))}
+              </div>
+            </div>
+          </SidebarGroup>
+          <SidebarSeparator className="group-data-[collapsible=icon]:hidden"/>
+          <SidebarGroup>
+            <SidebarGroupLabel className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+              <HelpCircle className="h-4 w-4" />
+              Legend
+            </SidebarGroupLabel>
+            <div className="flex flex-col gap-2 pt-2 text-xs text-sidebar-foreground/90 pl-2 group-data-[collapsible=icon]:hidden">
+              <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-accent" />
+                  <span>Direct Support Link</span>
+              </div>
+              <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-yellow-400" />
+                  <span>General Link</span>
               </div>
             </div>
           </SidebarGroup>

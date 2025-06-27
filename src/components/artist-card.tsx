@@ -94,62 +94,50 @@ export function ArtistCard({ artist }: ArtistCardProps) {
           </Accordion>
         )}
       </CardContent>
-      <CardFooter className="flex flex-col items-center justify-between gap-4 pt-4">
-        <div className="flex w-full flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            {artist.youtubeUrl && (
-              <SocialLink href={artist.youtubeUrl} label="YouTube" linkType="other">
-                <Youtube className="h-6 w-6" />
-              </SocialLink>
-            )}
-            {artist.spotifyUrl && (
-              <SocialLink href={artist.spotifyUrl} label="Spotify" linkType="paid">
-                <SpotifyIcon className="h-6 w-6" />
-              </SocialLink>
-            )}
-            {artist.appleMusicUrl && (
-              <SocialLink href={artist.appleMusicUrl} label="Apple Music" linkType="paid">
-                <AppleMusicIcon className="h-6 w-6" />
-              </SocialLink>
-            )}
-            {artist.discogsUrl && (
-              <SocialLink href={artist.discogsUrl} label="Discogs" linkType="paid">
-                <DiscogsIcon className="h-6 w-6" />
-              </SocialLink>
-            )}
-            {artist.otherLinks?.map((link, index) => (
-              <SocialLink key={index} href={link} label="their website" linkType="other">
-                <Globe className="h-6 w-6" />
-              </SocialLink>
-            ))}
-          </div>
-          {artist.bandcampUrl ? (
-            <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-md">
-              <a href={artist.bandcampUrl} target="_blank" rel="noopener noreferrer">
-                <div className="h-2 w-2 mr-1 shrink-0 rounded-full bg-white/80" />
-                <BandcampIcon className="mr-2 h-5 w-5" />
-                Support on Bandcamp
-              </a>
-            </Button>
-          ) : (
-            <Button asChild variant="outline">
-              <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-                <Github className="mr-2 h-4 w-4" />
-                Know this artist? Contribute
-              </a>
-            </Button>
+      <CardFooter className="flex items-center justify-between pt-4 border-t">
+        <div className="flex items-center gap-4">
+          {artist.youtubeUrl && (
+            <SocialLink href={artist.youtubeUrl} label="YouTube" linkType="other">
+              <Youtube className="h-6 w-6" />
+            </SocialLink>
           )}
+          {artist.spotifyUrl && (
+            <SocialLink href={artist.spotifyUrl} label="Spotify" linkType="paid">
+              <SpotifyIcon className="h-6 w-6" />
+            </SocialLink>
+          )}
+          {artist.appleMusicUrl && (
+            <SocialLink href={artist.appleMusicUrl} label="Apple Music" linkType="paid">
+              <AppleMusicIcon className="h-6 w-6" />
+            </SocialLink>
+          )}
+          {artist.discogsUrl && (
+            <SocialLink href={artist.discogsUrl} label="Discogs" linkType="paid">
+              <DiscogsIcon className="h-6 w-6" />
+            </SocialLink>
+          )}
+          {artist.otherLinks?.map((link, index) => (
+            <SocialLink key={index} href={link} label="their website" linkType="other">
+              <Globe className="h-6 w-6" />
+            </SocialLink>
+          ))}
         </div>
-        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-2 border-t w-full">
-            <div className="flex items-center gap-1.5">
-                <div className="h-2 w-2 rounded-full bg-accent" />
-                <span>Direct Support</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-                <div className="h-2 w-2 rounded-full bg-yellow-400" />
-                <span>General Link</span>
-            </div>
-        </div>
+        {artist.bandcampUrl ? (
+          <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-md">
+            <a href={artist.bandcampUrl} target="_blank" rel="noopener noreferrer">
+              <div className="h-2 w-2 mr-1 shrink-0 rounded-full bg-white/80" />
+              <BandcampIcon className="mr-2 h-5 w-5" />
+              Support on Bandcamp
+            </a>
+          </Button>
+        ) : (
+          <Button asChild variant="outline">
+            <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
+              <Github className="mr-2 h-4 w-4" />
+              Know this artist? Contribute
+            </a>
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
