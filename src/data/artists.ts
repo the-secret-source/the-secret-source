@@ -71,38 +71,42 @@ function loadAndParseArtists(): Artist[] {
     console.log(`[artists.ts] Processing dataset: ${dataset.name}`);
     try {
       const absolutePath = path.join(process.cwd(), 'src/data', dataset.filePath);
-      console.log(`[artists.ts] Reading file from absolute path: ${absolutePath}`);
       const fileContent = fs.readFileSync(absolutePath, 'utf8');
-      console.log(`[artists.ts] Successfully read file. Content length: ${fileContent.length}`);
       
       const parsedCsv = Papa.parse(fileContent, {
         header: true,
         skipEmptyLines: 'greedy',
-        trimHeaders: true,
+        trimHeaders: true, // Robustness against whitespace in headers
       });
-      console.log(`[artists.ts] Parsed CSV data. Found ${parsedCsv.data.length} rows.`);
+      console.log(`[artists.ts] Parsed CSV for ${dataset.name}. Found ${parsedCsv.data.length} rows.`);
 
 
       for (const rawTrack of parsedCsv.data as any[]) {
-        console.log('[artists.ts] Processing raw row:', rawTrack);
+        console.log('\n[artists.ts] ----- Processing New Row -----');
         if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
-          console.log('[artists.ts] Skipping invalid row:', rawTrack);
-          continue;
+            console.log('[artists.ts] Skipping invalid row:', rawTrack);
+            continue;
         }
         
+        console.log('[artists.ts] Raw Row Data:', JSON.stringify(rawTrack));
+
         const { title, artistName, source, links } = dataset.parser(rawTrack);
-        console.log(`[artists.ts] Parsed track data for artist: ${artistName}, title: ${title}`);
+        
+        console.log(`[artists.ts] Parsed artist: "${artistName}", title: "${title}"`);
+        console.log('[artists.ts] Parsed Links Object:', JSON.stringify(links));
+
 
         if (!artistsMap.has(artistName)) {
-          console.log(`[artists.ts] New artist found: ${artistName}. Creating new entry.`);
-          artistsMap.set(artistName, {
-            artistName,
-            tracks: [],
-          });
+            console.log(`[artists.ts] New artist found: ${artistName}. Creating new entry.`);
+            artistsMap.set(artistName, {
+                artistName,
+                tracks: [],
+            });
         }
 
         const artist = artistsMap.get(artistName)!;
 
+        // Create the new track object with all of its links from the CSV data.
         const newTrack: Track = {
           title,
           dataset: dataset.name,
@@ -110,19 +114,16 @@ function loadAndParseArtists(): Artist[] {
           ...links,
         };
         
-        console.log(`[artists.ts] Adding track "${title}" to artist "${artistName}".`);
+        console.log('[artists.ts] Created new track object:', JSON.stringify(newTrack));
+        
+        // Add the fully-formed track to the artist's track list.
         artist.tracks.push(newTrack);
-
-        // --- Populate Artist-Level Links from Track Data ---
-        // Overwrites artist-level links with data from each subsequent track.
-        // The last track's links will be the final ones for the artist.
-        for (const urlKey in links) {
-          const trackUrl = links[urlKey];
-          if (trackUrl) {
-            artist[urlKey] = trackUrl;
-            console.log(`[artists.ts] Set/updated ${urlKey} for ${artistName}: ${trackUrl}`);
-          }
-        }
+        
+        console.log(`[artists.ts] Pushed track to artist. Total tracks for ${artistName}: ${artist.tracks.length}`);
+        
+        // NOTE: We are no longer copying links from the track to the artist object
+        // to ensure track-level links are always preserved and displayed.
+        // Artist-level links would need to be provided separately in the data source.
       }
     } catch(e) {
       if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
