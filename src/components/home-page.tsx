@@ -127,7 +127,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
         </div>
       </div>
       <footer className="mt-auto flex flex-col items-center gap-4 py-6 text-center text-sm text-muted-foreground">
-        {year && <p>&copy; {year} The Secret Source. All Rights Reserved.</p>}
+        {year && <p>&copy; {year} Karn Watcharasupat and contributors</p>}
         <Button asChild variant="outline" size="sm">
           <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
             <FaGithub />
