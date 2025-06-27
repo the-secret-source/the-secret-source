@@ -16,6 +16,7 @@ export function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const [year, setYear] = useState<number | null>(null);
 
   const fetchArtist = async () => {
     setIsLoading(true);
@@ -63,6 +64,7 @@ export function HomePage() {
 
   useEffect(() => {
     fetchArtist();
+    setYear(new Date().getFullYear());
   }, []);
 
   const handleNewArtist = () => {
@@ -107,6 +109,9 @@ export function HomePage() {
           </Button>
         </div>
       </div>
+      <footer className="mt-auto py-6 text-center text-sm text-muted-foreground">
+        {year && <p>&copy; {year} The Secret Source. All Rights Reserved.</p>}
+      </footer>
     </div>
   );
 }

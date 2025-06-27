@@ -1,7 +1,7 @@
 import { getArtists } from "@/data/artists";
-import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger } from "@/components/ui/sidebar";
+import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail } from "@/components/ui/sidebar";
 import { Progress } from "@/components/ui/progress";
-import { Music, Users, Link, Link2Off } from "lucide-react";
+import { Music, Users, Link } from "lucide-react";
 
 export function AppSidebar() {
   const artists = getArtists();
@@ -24,6 +24,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
+      <SidebarRail />
       <SidebarHeader className="flex items-center justify-between p-2">
         <h2 className="pl-2 text-xl font-semibold text-sidebar-foreground/80 group-data-[collapsible=icon]:hidden">
           Stats
