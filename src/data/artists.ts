@@ -84,7 +84,8 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
       if (!artist.tracks.some((t) => t.title === title)) {
         artist.tracks.push({
           title,
-          dataset: source || dataset.name,
+          dataset: dataset.name,
+          source: source,
           bandcampUrl: links?.bandcampUrl,
           spotifyUrl: links?.spotifyUrl,
         });

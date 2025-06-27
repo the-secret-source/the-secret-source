@@ -78,7 +78,10 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                           </TooltipProvider>
                         )}
                       </div>
-                      <Badge variant="secondary">{track.dataset}</Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">{track.dataset}</Badge>
+                        {track.source && <Badge variant="outline">{track.source}</Badge>}
+                      </div>
                     </li>
                   ))}
                 </ul>

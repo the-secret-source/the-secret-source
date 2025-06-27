@@ -1,6 +1,7 @@
 export interface Track {
   title: string;
   dataset: string;
+  source?: string;
   bandcampUrl?: string;
   spotifyUrl?: string;
 }
