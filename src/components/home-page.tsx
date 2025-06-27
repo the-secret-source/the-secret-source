@@ -11,10 +11,10 @@ import { Loader2, Github } from 'lucide-react';
 
 interface HomePageProps {
   selectedDatasets: string[];
-  withLinksOnly: boolean;
+  selectedLinkTypes: string[];
 }
 
-export function HomePage({ selectedDatasets, withLinksOnly }: HomePageProps) {
+export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps) {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,11 +28,17 @@ export function HomePage({ selectedDatasets, withLinksOnly }: HomePageProps) {
     setArtist(null);
     try {
       // Get a random artist from the local dataset, applying filters
-      const artistData = await getRandomArtist({ datasets: selectedDatasets, withLinksOnly });
+      const artistData = await getRandomArtist({ datasets: selectedDatasets, linkTypes: selectedLinkTypes });
 
       if (!artistData) {
-        if (selectedDatasets.length > 0) {
+        if (selectedDatasets.length > 0 && selectedLinkTypes.length > 0) {
           throw new Error("No artists found for the selected filters. Try adjusting your filters.");
+        }
+        if (selectedDatasets.length === 0) {
+          throw new Error("Please select at least one dataset to discover artists.");
+        }
+        if (selectedLinkTypes.length === 0) {
+          throw new Error("Please select at least one link type to discover artists.");
         }
         throw new Error("No artist data could be loaded. The dataset might be empty or invalid.");
       }
@@ -41,7 +47,7 @@ export function HomePage({ selectedDatasets, withLinksOnly }: HomePageProps) {
     } catch (e: any) {
       const errorMessage = e.message || "Failed to fetch artist. Please try again.";
       setError(errorMessage);
-      if (e.message !== "No artists found for the selected filters. Try adjusting your filters.") {
+      if (!errorMessage.includes("filters") && !errorMessage.includes("dataset") && !errorMessage.includes("link type")) {
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -55,14 +61,18 @@ export function HomePage({ selectedDatasets, withLinksOnly }: HomePageProps) {
   };
 
   useEffect(() => {
-    if (selectedDatasets.length > 0) {
+    if (selectedDatasets.length > 0 && selectedLinkTypes.length > 0) {
       fetchArtist();
     } else {
       setArtist(null);
-      setError("Please select at least one dataset to discover artists.");
+      if (selectedDatasets.length === 0) {
+        setError("Please select at least one dataset to discover artists.");
+      } else if (selectedLinkTypes.length === 0) {
+        setError("Please select at least one link type to discover artists.");
+      }
       setIsLoading(false);
     }
-  }, [selectedDatasets, withLinksOnly]);
+  }, [selectedDatasets, selectedLinkTypes]);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
@@ -75,6 +85,7 @@ export function HomePage({ selectedDatasets, withLinksOnly }: HomePageProps) {
   };
 
   const isDiscovering = isPending || isLoading;
+  const canDiscover = selectedDatasets.length > 0 && selectedLinkTypes.length > 0;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12">
@@ -98,7 +109,7 @@ export function HomePage({ selectedDatasets, withLinksOnly }: HomePageProps) {
         </div>
         
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button onClick={handleNewArtist} disabled={isDiscovering || selectedDatasets.length === 0} size="lg" className="shadow-lg">
+          <Button onClick={handleNewArtist} disabled={isDiscovering || !canDiscover} size="lg" className="shadow-lg">
             {isDiscovering ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />

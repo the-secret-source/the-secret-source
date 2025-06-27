@@ -155,8 +155,39 @@ function loadAndParseArtists(): Artist[] {
  * @param filters - Optional filters to apply.
  * @returns An array of artists.
  */
-export function getArtists(filters?: { datasets?: string[]; withLinksOnly?: boolean }): Artist[] {
+export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[] }): Artist[] {
     console.log('[artists.ts] getArtists() called with filters:', filters);
+
+    const getArtistCategory = (artist: Artist): 'direct' | 'streaming' | 'other' | 'none' => {
+      const directSupportKeys = ['bandcampUrl', 'discogsUrl'];
+      const streamingKeys = ['spotifyUrl', 'appleMusicUrl'];
+      const otherLinkKeys = ['youtubeUrl', 'otherLinks', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl'];
+
+      const hasLink = (obj: any, keys: string[]) => {
+        if (!obj) return false;
+        return keys.some(key => {
+          if (key === 'otherLinks') {
+            return Array.isArray(obj[key]) && obj[key].length > 0;
+          }
+          return !!obj[key];
+        });
+      }
+      
+      const hasArtistDirectLink = hasLink(artist, directSupportKeys);
+      const hasTrackDirectLink = artist.tracks.some(track => hasLink(track, directSupportKeys));
+      if (hasArtistDirectLink || hasTrackDirectLink) return 'direct';
+
+      const hasArtistStreamingLink = hasLink(artist, streamingKeys);
+      const hasTrackStreamingLink = artist.tracks.some(track => hasLink(track, streamingKeys));
+      if (hasArtistStreamingLink || hasTrackStreamingLink) return 'streaming';
+
+      const hasArtistOtherLink = hasLink(artist, otherLinkKeys);
+      const hasTrackOtherLink = artist.tracks.some(track => hasLink(track, otherLinkKeys));
+      if (hasArtistOtherLink || hasTrackOtherLink) return 'other';
+
+      return 'none';
+    };
+    
     if (!cachedArtists || cachedArtists.length === 0) {
         console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
         cachedArtists = loadAndParseArtists();
@@ -167,14 +198,16 @@ export function getArtists(filters?: { datasets?: string[]; withLinksOnly?: bool
 
     let artistsToFilter = cachedArtists;
 
-    if (filters?.withLinksOnly) {
-        console.log('[artists.ts] Filtering for artists with links only.');
-        artistsToFilter = artistsToFilter.filter(artist => {
-            const hasArtistPageLink = artist.bandcampUrl || artist.spotifyUrl || artist.youtubeUrl || artist.discogsUrl || (artist.otherLinks && artist.otherLinks.length > 0);
-            const hasTrackLink = artist.tracks.some(track => track.bandcampUrl || track.spotifyUrl);
-            return hasArtistPageLink || hasTrackLink;
-        });
-        console.log(`[artists.ts] After link filtering: ${artistsToFilter.length} artists remain.`);
+    if (filters?.linkTypes) {
+      if (filters.linkTypes.length === 0) {
+        return []; // Return empty if no link types are selected
+      }
+      console.log('[artists.ts] Filtering for artists by link types:', filters.linkTypes);
+      artistsToFilter = artistsToFilter.filter(artist => {
+          const category = getArtistCategory(artist);
+          return filters.linkTypes!.includes(category);
+      });
+      console.log(`[artists.ts] After link type filtering: ${artistsToFilter.length} artists remain.`);
     }
 
     if (filters?.datasets && filters.datasets.length > 0 && filters.datasets.length < getDatasetNames().length) {

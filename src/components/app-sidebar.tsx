@@ -29,11 +29,17 @@ interface AppSidebarProps {
   allDatasetNames: string[];
   selectedDatasets: string[];
   onDatasetToggle: (datasetName: string) => void;
-  withLinksOnly: boolean;
-  onWithLinksOnlyToggle: () => void;
+  selectedLinkTypes: string[];
+  onLinkTypeToggle: (linkType: string) => void;
 }
 
-export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, withLinksOnly, onWithLinksOnlyToggle }: AppSidebarProps) {
+const linkTypeFilters = [
+  { id: 'direct', label: 'Direct Support' },
+  { id: 'streaming', label: 'Streaming Only' },
+  { id: 'other', label: 'Other' },
+];
+
+export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, selectedLinkTypes, onLinkTypeToggle }: AppSidebarProps) {
   const { artistCount, trackCount } = stats;
 
   const artistProgressData = [
@@ -108,15 +114,22 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
               Filters
             </SidebarGroupLabel>
             <div className="flex flex-col gap-3 pt-2 group-data-[collapsible=icon]:hidden">
-              <div className="flex items-center space-x-2 pl-2">
-                <Checkbox 
-                  id="withLinksOnly" 
-                  checked={withLinksOnly}
-                  onCheckedChange={onWithLinksOnlyToggle}
-                />
-                <Label htmlFor="withLinksOnly" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
-                  Only artists with links
+              <div className="flex flex-col gap-2">
+                <Label className="px-2 text-xs text-sidebar-foreground/70">
+                  Link Type
                 </Label>
+                {linkTypeFilters.map(filter => (
+                  <div key={filter.id} className="flex items-center space-x-2 pl-2">
+                    <Checkbox
+                      id={filter.id}
+                      checked={selectedLinkTypes.includes(filter.id)}
+                      onCheckedChange={() => onLinkTypeToggle(filter.id)}
+                    />
+                    <Label htmlFor={filter.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
+                      {filter.label}
+                    </Label>
+                  </div>
+                ))}
               </div>
 
               <SidebarSeparator />

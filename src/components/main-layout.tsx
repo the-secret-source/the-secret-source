@@ -12,7 +12,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
   const [selectedDatasets, setSelectedDatasets] = useState<string[]>([]);
-  const [withLinksOnly, setWithLinksOnly] = useState<boolean>(false);
+  const [selectedLinkTypes, setSelectedLinkTypes] = useState<string[]>(['direct', 'streaming', 'other']);
   
   useEffect(() => {
     setSelectedDatasets(allDatasetNames);
@@ -26,9 +26,13 @@ export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
     );
   };
 
-  const handleWithLinksOnlyToggle = () => {
-    setWithLinksOnly(prev => !prev);
-  }
+  const handleLinkTypeToggle = (linkType: string) => {
+    setSelectedLinkTypes(prev =>
+      prev.includes(linkType)
+        ? prev.filter(t => t !== linkType)
+        : [...prev, linkType]
+    );
+  };
 
   return (
     <>
@@ -37,11 +41,11 @@ export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
         allDatasetNames={allDatasetNames} 
         selectedDatasets={selectedDatasets}
         onDatasetToggle={handleDatasetToggle}
-        withLinksOnly={withLinksOnly}
-        onWithLinksOnlyToggle={handleWithLinksOnlyToggle}
+        selectedLinkTypes={selectedLinkTypes}
+        onLinkTypeToggle={handleLinkTypeToggle}
       />
       <SidebarInset>
-        <HomePage selectedDatasets={selectedDatasets} withLinksOnly={withLinksOnly} />
+        <HomePage selectedDatasets={selectedDatasets} selectedLinkTypes={selectedLinkTypes} />
       </SidebarInset>
     </>
   );
