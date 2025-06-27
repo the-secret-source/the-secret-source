@@ -6,10 +6,11 @@
  * - getRandomArtist - A function that returns a random artist's information.
  */
 
-import { artists } from '@/data/artists';
+import { getArtists } from '@/data/artists';
 import type { Artist } from '@/lib/types';
 
 export async function getRandomArtist(): Promise<Artist | null> {
+  const artists = getArtists();
   if (!artists || artists.length === 0) {
     console.error("Artist data is empty. Cannot select a random artist.");
     return null;

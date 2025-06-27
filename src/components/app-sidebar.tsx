@@ -1,15 +1,16 @@
-import { artists } from "@/data/artists";
+import { getArtists } from "@/data/artists";
 import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Music, Users, Link, Link2Off } from "lucide-react";
 
 export function AppSidebar() {
+  const artists = getArtists();
   const artistCount = artists.length;
   const trackCount = artists.reduce((sum, artist) => sum + artist.tracks.length, 0);
 
   const artistsWithLinks = artists.filter(artist => {
     // An artist is considered to have links if any of their tracks in the dataset has a link.
     const hasTrackLink = artist.tracks.some(track => track.bandcampUrl || track.spotifyUrl);
-    return hasTrackLink;
+    return hasTrackLink || artist.bandcampUrl || artist.spotifyUrl || artist.youtubeUrl;
   }).length;
 
   const artistsWithoutLinks = artistCount - artistsWithLinks;

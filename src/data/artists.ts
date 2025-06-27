@@ -1,21 +1,21 @@
 /**
  * @fileOverview Data processing layer for artist and track information.
- * This file imports raw data from various datasets, parses them into a
- * unified format, and exports a final list of artists for the application.
- * It's designed to be extensible for new datasets.
+ * This file provides a function to load, parse, and cache artist data from
+ * CSV files. It's designed to be extensible for new datasets.
  */
 import fs from 'fs';
 import path from 'path';
 import Papa from 'papaparse';
 import type { Artist, Track } from '@/lib/types';
 
+// --- Caching ---
+let cachedArtists: Artist[] | null = null;
+
 // --- Dataset Definitions ---
-// Register all datasets here. Each object needs a name and the tracklist data.
 const datasetsToParse = [
   {
     name: 'MUSDB-18',
     filePath: 'datasets/musdb-18.csv',
-    // The parser function dynamically handles any column ending in `_url`.
     parser: (row: any) => {
       const parsed: { [key: string]: any } = {
         title: row.track_title,
@@ -34,24 +34,17 @@ const datasetsToParse = [
       return parsed;
     },
   },
-  // Example for adding another dataset:
-  // {
-  //   name: 'My-Dataset',
-  //   filePath: 'datasets/my-dataset.csv',
-  //   parser: (row: any) => { /* ... */ }
-  // }
 ];
 
 /**
- * Parses and merges tracklists from multiple datasets into a unified,
- * de-duplicated list of artists.
- * @param datasets An array of dataset objects to process.
- * @returns An array of artists, conforming to the Artist interface.
+ * Loads and parses artist data from the defined datasets.
+ * This function is for internal use by getArtists().
+ * @returns An array of artists.
  */
-function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
+function loadAndParseArtists(): Artist[] {
   const artistsMap = new Map<string, Artist>();
 
-  for (const dataset of datasets) {
+  for (const dataset of datasetsToParse) {
     try {
       const absolutePath = path.join(process.cwd(), 'src/data', dataset.filePath);
       const fileContent = fs.readFileSync(absolutePath, 'utf8');
@@ -62,7 +55,6 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
       });
 
       for (const rawTrack of parsedCsv.data as any[]) {
-        // A more robust check to ensure that we only process valid track data.
         if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
           continue;
         }
@@ -83,17 +75,14 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
           title,
           dataset: dataset.name,
           source: source,
-          ...links, // Spread all dynamic URLs onto the track object
+          ...links,
         };
 
         artist.tracks.push(newTrack);
 
-        // Infer artist-level URLs from track URLs.
         for (const urlKey in links) {
-          // If the artist doesn't have this URL yet, try to infer it.
           if (!artist[urlKey]) {
             const trackUrl = links[urlKey];
-            // Special logic for Bandcamp to get the root artist page
             if (urlKey === 'bandcampUrl' && trackUrl) {
               try {
                 const url = new URL(trackUrl);
@@ -101,10 +90,9 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
                   artist.bandcampUrl = `${url.protocol}//${url.hostname}`;
                 }
               } catch (e) {
-                console.error(`Could not parse bandcamp URL for track: ${trackUrl}`);
+                // Ignore invalid URLs
               }
             } else if (trackUrl) {
-              // For all other URLs (spotify, discogs, etc.), we'll just copy the first one we find.
               artist[urlKey] = trackUrl;
             }
           }
@@ -112,12 +100,22 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
       }
     } catch(e) {
       console.error(`Failed to read or process dataset: ${dataset.name}`, e);
+      // If a file fails to parse, we'll continue with what we have, but the error will be logged.
     }
   }
 
   return Array.from(artistsMap.values());
 }
 
-// --- Main Export ---
-// Process all registered datasets and export the final artist list.
-export const artists: Artist[] = parseAndMergeArtists(datasetsToParse);
+
+/**
+ * Retrieves the list of all artists, loading and caching them if necessary.
+ * @returns An array of artists.
+ */
+export function getArtists(): Artist[] {
+    if (cachedArtists) {
+        return cachedArtists;
+    }
+    cachedArtists = loadAndParseArtists();
+    return cachedArtists;
+}
