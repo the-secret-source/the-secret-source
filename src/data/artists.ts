@@ -24,10 +24,8 @@ const datasetsToParse = [
       artistName: row.artist_name,
       genre: row.genre,
       source: row.source,
-      links: {
-        bandcampUrl: row.bandcamp_url || undefined,
-        spotifyUrl: row.spotify_url || undefined,
-      },
+      // Links are now found by the AI, so they are not parsed from the CSV.
+      links: {},
     }),
   },
   // Example for adding another dataset:
@@ -65,31 +63,27 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
     });
 
     for (const rawTrack of parsedCsv.data as any[]) {
-      const { title, artistName, genre, source, links } = dataset.parser(rawTrack);
+      const { title, artistName, genre, source } = dataset.parser(rawTrack);
 
-      if (!artistName) continue;
+      if (!artistName || !title) continue;
 
       if (!artistsMap.has(artistName)) {
         artistsMap.set(artistName, {
           artistName,
           genre,
           tracks: [],
-          // In a real scenario, social links could come from the dataset
-          // or a separate mapping file. They are omitted here to allow AI to find them.
+          // Social links are found by the AI, not from the initial dataset.
         });
       }
 
       const artist = artistsMap.get(artistName)!;
-      // Ensure the same track from a different dataset isn't added twice.
-      if (!artist.tracks.some((t) => t.title === title)) {
-        artist.tracks.push({
-          title,
-          dataset: dataset.name,
-          source: source,
-          bandcampUrl: links?.bandcampUrl,
-          spotifyUrl: links?.spotifyUrl,
-        });
-      }
+
+      // Add the track without de-duplication to ensure all 150 are included.
+      artist.tracks.push({
+        title,
+        dataset: dataset.name,
+        source: source,
+      });
     }
   }
 
