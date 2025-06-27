@@ -13,6 +13,7 @@ export interface AppSidebarStats {
   artistsWithLinksPercentage: number;
   tracksWithLinks: number;
   tracksWithLinksPercentage: number;
+  datasetCounts: Record<string, number>;
 }
 
 interface AppSidebarProps {
@@ -107,15 +108,18 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
                   Dataset
                 </Label>
                 {allDatasetNames.map(name => (
-                  <div key={name} className="flex items-center space-x-2 pl-2">
-                    <Checkbox 
-                      id={name} 
-                      checked={selectedDatasets.includes(name)}
-                      onCheckedChange={() => onDatasetToggle(name)}
-                    />
-                    <Label htmlFor={name} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
-                      {name}
-                    </Label>
+                  <div key={name} className="flex items-center justify-between px-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={name} 
+                        checked={selectedDatasets.includes(name)}
+                        onCheckedChange={() => onDatasetToggle(name)}
+                      />
+                      <Label htmlFor={name} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
+                        {name}
+                      </Label>
+                    </div>
+                    <span className="font-mono text-sm text-sidebar-foreground/70">{stats.datasetCounts[name] ?? 0}</span>
                   </div>
                 ))}
               </div>

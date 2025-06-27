@@ -22,13 +22,25 @@ export default function Home() {
 
   const tracksWithLinksPercentage = trackCount > 0 ? Math.round((tracksWithLinks / trackCount) * 100) : 0;
 
+  const datasetCounts = allDatasetNames.reduce((acc, name) => {
+    const artistsInDataset = new Set<string>();
+    artists.forEach(artist => {
+      if (artist.tracks.some(track => track.dataset === name)) {
+        artistsInDataset.add(artist.artistName);
+      }
+    });
+    acc[name] = artistsInDataset.size;
+    return acc;
+  }, {} as Record<string, number>);
+
   const stats = {
     artistCount,
     trackCount,
     artistsWithLinks,
     artistsWithLinksPercentage,
     tracksWithLinks,
-    tracksWithLinksPercentage
+    tracksWithLinksPercentage,
+    datasetCounts,
   };
 
   return <MainLayout allDatasetNames={allDatasetNames} stats={stats} />;
