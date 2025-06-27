@@ -76,18 +76,17 @@ function loadAndParseArtists(): Artist[] {
       const parsedCsv = Papa.parse(fileContent, {
         header: true,
         skipEmptyLines: 'greedy',
-        trimHeaders: true, // Robustness against whitespace in headers
+        trimHeaders: true,
       });
       console.log(`[artists.ts] Parsed CSV for ${dataset.name}. Found ${parsedCsv.data.length} rows.`);
 
 
       for (const rawTrack of parsedCsv.data as any[]) {
-        console.log('\n[artists.ts] ----- Processing New Row -----');
         if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
-            console.log('[artists.ts] Skipping invalid row:', rawTrack);
             continue;
         }
         
+        console.log('\n[artists.ts] ----- Processing Raw Row -----');
         console.log('[artists.ts] Raw Row Data:', JSON.stringify(rawTrack));
 
         const { title, artistName, source, links } = dataset.parser(rawTrack);
@@ -97,7 +96,6 @@ function loadAndParseArtists(): Artist[] {
 
 
         if (!artistsMap.has(artistName)) {
-            console.log(`[artists.ts] New artist found: ${artistName}. Creating new entry.`);
             artistsMap.set(artistName, {
                 artistName,
                 tracks: [],
@@ -106,24 +104,47 @@ function loadAndParseArtists(): Artist[] {
 
         const artist = artistsMap.get(artistName)!;
 
-        // Create the new track object with all of its links from the CSV data.
+        // Create the new track object. This object contains all its own links from the CSV.
+        // It will be added to the artist's tracks array unmodified.
         const newTrack: Track = {
           title,
           dataset: dataset.name,
           source: source,
           ...links,
         };
-        
         console.log('[artists.ts] Created new track object:', JSON.stringify(newTrack));
         
-        // Add the fully-formed track to the artist's track list.
+        // --- Artist-level Link Inference (Without modifying the track) ---
+        
+        // 1. Infer artist's main Bandcamp URL from the track's URL.
+        // We only do this if the artist doesn't already have a bandcampUrl.
+        if (newTrack.bandcampUrl && !artist.bandcampUrl) {
+          try {
+            const url = new URL(newTrack.bandcampUrl);
+            // This creates the base URL, e.g., https://artist.bandcamp.com
+            const artistBandcampUrl = `${url.protocol}//${url.hostname}`;
+            artist.bandcampUrl = artistBandcampUrl;
+            console.log(`[artists.ts] Inferred artist Bandcamp URL for ${artistName}: ${artistBandcampUrl}`);
+          } catch (e) {
+            console.warn(`[artists.ts] Invalid Bandcamp URL for ${artistName}, copying as-is: ${newTrack.bandcampUrl}`);
+            artist.bandcampUrl = newTrack.bandcampUrl;
+          }
+        }
+        
+        // 2. Copy other links from the track to the artist, only if not already present on the artist.
+        for (const key in links) {
+          // We already handled bandcampUrl separately.
+          if (key === 'bandcampUrl') continue;
+          
+          if (!artist[key]) {
+            artist[key] = links[key];
+            console.log(`[artists.ts] Copied '${key}' to artist ${artistName}`);
+          }
+        }
+        
+        // Add the fully-formed, original track to the artist's track list.
         artist.tracks.push(newTrack);
-        
         console.log(`[artists.ts] Pushed track to artist. Total tracks for ${artistName}: ${artist.tracks.length}`);
-        
-        // NOTE: We are no longer copying links from the track to the artist object
-        // to ensure track-level links are always preserved and displayed.
-        // Artist-level links would need to be provided separately in the data source.
       }
     } catch(e) {
       if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
