@@ -12,6 +12,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
   const [selectedDatasets, setSelectedDatasets] = useState<string[]>([]);
+  const [withLinksOnly, setWithLinksOnly] = useState<boolean>(false);
   
   useEffect(() => {
     setSelectedDatasets(allDatasetNames);
@@ -25,6 +26,10 @@ export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
     );
   };
 
+  const handleWithLinksOnlyToggle = () => {
+    setWithLinksOnly(prev => !prev);
+  }
+
   return (
     <>
       <AppSidebar 
@@ -32,9 +37,11 @@ export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
         allDatasetNames={allDatasetNames} 
         selectedDatasets={selectedDatasets}
         onDatasetToggle={handleDatasetToggle}
+        withLinksOnly={withLinksOnly}
+        onWithLinksOnlyToggle={handleWithLinksOnlyToggle}
       />
       <SidebarInset>
-        <HomePage selectedDatasets={selectedDatasets} />
+        <HomePage selectedDatasets={selectedDatasets} withLinksOnly={withLinksOnly} />
       </SidebarInset>
     </>
   );

@@ -20,9 +20,11 @@ interface AppSidebarProps {
   allDatasetNames: string[];
   selectedDatasets: string[];
   onDatasetToggle: (datasetName: string) => void;
+  withLinksOnly: boolean;
+  onWithLinksOnlyToggle: () => void;
 }
 
-export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle }: AppSidebarProps) {
+export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, withLinksOnly, onWithLinksOnlyToggle }: AppSidebarProps) {
   const { artistCount, trackCount, artistsWithLinks, artistsWithLinksPercentage, tracksWithLinks, tracksWithLinksPercentage } = stats;
 
   return (
@@ -84,21 +86,39 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
           <SidebarGroup>
             <SidebarGroupLabel className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              Filter by Dataset
+              Filters
             </SidebarGroupLabel>
-            <div className="flex flex-col gap-2 pt-2 group-data-[collapsible=icon]:hidden">
-              {allDatasetNames.map(name => (
-                <div key={name} className="flex items-center space-x-2 pl-2">
-                  <Checkbox 
-                    id={name} 
-                    checked={selectedDatasets.includes(name)}
-                    onCheckedChange={() => onDatasetToggle(name)}
-                  />
-                  <Label htmlFor={name} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
-                    {name}
-                  </Label>
-                </div>
-              ))}
+            <div className="flex flex-col gap-3 pt-2 group-data-[collapsible=icon]:hidden">
+              <div className="flex items-center space-x-2 pl-2">
+                <Checkbox 
+                  id="withLinksOnly" 
+                  checked={withLinksOnly}
+                  onCheckedChange={onWithLinksOnlyToggle}
+                />
+                <Label htmlFor="withLinksOnly" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
+                  Only artists with links
+                </Label>
+              </div>
+
+              <SidebarSeparator />
+
+              <div className="flex flex-col gap-2">
+                <Label className="px-2 text-xs text-sidebar-foreground/70">
+                  Dataset
+                </Label>
+                {allDatasetNames.map(name => (
+                  <div key={name} className="flex items-center space-x-2 pl-2">
+                    <Checkbox 
+                      id={name} 
+                      checked={selectedDatasets.includes(name)}
+                      onCheckedChange={() => onDatasetToggle(name)}
+                    />
+                    <Label htmlFor={name} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
+                      {name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
           </SidebarGroup>
         </SidebarMenu>

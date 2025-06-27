@@ -11,9 +11,10 @@ import { Loader2, Github } from 'lucide-react';
 
 interface HomePageProps {
   selectedDatasets: string[];
+  withLinksOnly: boolean;
 }
 
-export function HomePage({ selectedDatasets }: HomePageProps) {
+export function HomePage({ selectedDatasets, withLinksOnly }: HomePageProps) {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,11 +28,11 @@ export function HomePage({ selectedDatasets }: HomePageProps) {
     setArtist(null);
     try {
       // Get a random artist from the local dataset, applying filters
-      const artistData = await getRandomArtist({ datasets: selectedDatasets });
+      const artistData = await getRandomArtist({ datasets: selectedDatasets, withLinksOnly });
 
       if (!artistData) {
         if (selectedDatasets.length > 0) {
-          throw new Error("No artists found for the selected datasets. Try adjusting your filters.");
+          throw new Error("No artists found for the selected filters. Try adjusting your filters.");
         }
         throw new Error("No artist data could be loaded. The dataset might be empty or invalid.");
       }
@@ -40,7 +41,7 @@ export function HomePage({ selectedDatasets }: HomePageProps) {
     } catch (e: any) {
       const errorMessage = e.message || "Failed to fetch artist. Please try again.";
       setError(errorMessage);
-      if (e.message !== "No artists found for the selected datasets. Try adjusting your filters.") {
+      if (e.message !== "No artists found for the selected filters. Try adjusting your filters.") {
         toast({
           variant: 'destructive',
           title: 'Error',
@@ -61,7 +62,7 @@ export function HomePage({ selectedDatasets }: HomePageProps) {
       setError("Please select at least one dataset to discover artists.");
       setIsLoading(false);
     }
-  }, [selectedDatasets]);
+  }, [selectedDatasets, withLinksOnly]);
 
   useEffect(() => {
     setYear(new Date().getFullYear());

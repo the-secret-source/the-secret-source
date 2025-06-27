@@ -155,8 +155,8 @@ function loadAndParseArtists(): Artist[] {
  * @param filters - Optional filters to apply.
  * @returns An array of artists.
  */
-export function getArtists(filters?: { datasets?: string[] }): Artist[] {
-    console.log('[artists.ts] getArtists() called.');
+export function getArtists(filters?: { datasets?: string[]; withLinksOnly?: boolean }): Artist[] {
+    console.log('[artists.ts] getArtists() called with filters:', filters);
     if (!cachedArtists || cachedArtists.length === 0) {
         console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
         cachedArtists = loadAndParseArtists();
@@ -165,26 +165,35 @@ export function getArtists(filters?: { datasets?: string[] }): Artist[] {
       console.log(`[artists.ts] Using cached artists. Count: ${cachedArtists.length}`);
     }
 
-    const artistsToFilter = cachedArtists;
+    let artistsToFilter = cachedArtists;
 
-    if (!filters?.datasets || filters.datasets.length === 0 || filters.datasets.length === getDatasetNames().length) {
-      console.log('[artists.ts] No dataset filter applied, returning all artists.');
-      return artistsToFilter;
-    }
-    
-    console.log(`[artists.ts] Filtering artists by datasets: ${filters.datasets.join(', ')}`);
-
-    const filteredArtists: Artist[] = [];
-    for (const artist of artistsToFilter) {
-      const filteredTracks = artist.tracks.filter(track => filters.datasets!.includes(track.dataset));
-      if (filteredTracks.length > 0) {
-        filteredArtists.push({
-          ...artist,
-          tracks: filteredTracks,
+    if (filters?.withLinksOnly) {
+        console.log('[artists.ts] Filtering for artists with links only.');
+        artistsToFilter = artistsToFilter.filter(artist => {
+            const hasArtistPageLink = artist.bandcampUrl || artist.spotifyUrl || artist.youtubeUrl || artist.discogsUrl || (artist.otherLinks && artist.otherLinks.length > 0);
+            const hasTrackLink = artist.tracks.some(track => track.bandcampUrl || track.spotifyUrl);
+            return hasArtistPageLink || hasTrackLink;
         });
+        console.log(`[artists.ts] After link filtering: ${artistsToFilter.length} artists remain.`);
+    }
+
+    if (filters?.datasets && filters.datasets.length > 0 && filters.datasets.length < getDatasetNames().length) {
+      console.log(`[artists.ts] Filtering artists by datasets: ${filters.datasets.join(', ')}`);
+
+      const filteredByDataset: Artist[] = [];
+      for (const artist of artistsToFilter) {
+        const filteredTracks = artist.tracks.filter(track => filters.datasets!.includes(track.dataset));
+        if (filteredTracks.length > 0) {
+          filteredByDataset.push({
+            ...artist,
+            tracks: filteredTracks,
+          });
+        }
       }
+      artistsToFilter = filteredByDataset;
+      console.log(`[artists.ts] After dataset filtering: ${artistsToFilter.length} artists remain.`);
     }
     
-    console.log(`[artists.ts] Filtering complete. ${filteredArtists.length} artists matched.`);
-    return filteredArtists;
+    console.log(`[artists.ts] Returning ${artistsToFilter.length} artists.`);
+    return artistsToFilter;
 }
