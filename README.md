@@ -2,7 +2,11 @@
 
 "the secret source" is a project dedicated to celebrating and supporting the artists whose music is often used in open-source datasets for research and development. It's a way to give back and discover the creators behind the data that powers so much innovation in the audio technology space.
 
-This application randomly selects an artist from a curated list, displays their featured tracks, and uses AI to find links to their music on platforms like Bandcamp, Spotify, and YouTube, making it easy to support them directly.
+## Supporting This Project
+
+Even though there is a sponsor button on the side of this repo, this is meant to only cover the cost of hosting the website. Any additional proceeds (after applicable tax) will go directly to [Weathervane Music](https://weathervanemusic.org/donate). Updates will be posted here for full transparency.
+
+If you would like to cover the long-term cost of hosting this website directly (i.e., be billed by GCP for this project instead of me), please contact me at kwatcharasupat [at] ieee.org. 
 
 ## Getting Started
 
