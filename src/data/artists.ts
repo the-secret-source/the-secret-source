@@ -34,7 +34,7 @@ const datasetsToParse = [
     name: 'MUSDB-18',
     tracklist: musdb18Tracklist,
     // The parser function can be customized per-dataset if the format differs.
-    parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2], links: track[3] }),
+    parser: (track: any[]) => ({ title: track[1], artistName: track[0], genre: track[2], links: track[3] }),
   },
   // Example for adding another dataset:
   // {
