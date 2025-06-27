@@ -26,46 +26,37 @@ We welcome contributions to expand the list of open-source artists! If you know 
 
 ### Adding a New Dataset
 
-1.  **Create a Dataset File**:
+We encourage contributions! The easiest way to add artists is by providing a CSV file.
+
+1.  **Create a CSV File**:
     *   Navigate to the `src/data/datasets/` directory.
-    *   Create a new TypeScript file for your dataset (e.g., `my-dataset.ts`).
-    *   Inside this file, export your tracklist as a constant. The standard format is an array of tuples, where each tuple is `[trackTitle: string, artistName: string, genre: string, links?: { bandcampUrl?: string; spotifyUrl?: string }]`.
+    *   Create a new CSV file for your dataset (e.g., `my-dataset.csv`).
+    *   The CSV must have the following header: `artist_name,track_title,genre,bandcamp_url,spotify_url`.
+    *   Fill the CSV with your track data. Here's an example row:
+      ```csv
+      "The Cool Band","Awesome Song","Indie Rock","https://thecoolband.bandcamp.com/track/awesome-song",
+      ```
 
-    *Example (`src/data/datasets/my-dataset.ts`):*
-    ```typescript
-    export const myDatasetTracklist: [string, string, string, { bandcampUrl?: string; spotifyUrl?: string }?][] = [
-      ['Awesome Song', 'The Cool Band', 'Indie Rock'],
-      ['Another Hit', 'The Cool Band', 'Indie Rock'],
-      ['Synth Dreams', 'Digital Artist', 'Electronic', { bandcampUrl: 'https://digitalartist.bandcamp.com/track/synth-dreams' }],
-    ];
-    ```
-
-2.  **Register and Parse Your Dataset**:
+2.  **Register Your Dataset**:
     *   Open `src/data/artists.ts`.
-    *   **Import** your new tracklist at the top of the file:
-        ```typescript
-        import { myDatasetTracklist } from './datasets/my-dataset';
-        ```
-    *   **Register the dataset**. Add a new entry to the `datasetsToParse` array. You'll need to provide a `name`, the `tracklist` data you just imported, and a `parser` function. If your data follows the standard format, you can reuse the existing parser logic.
+    *   Add a new entry to the `datasetsToParse` array. You'll need to provide a `name` and the `filePath` for your new CSV. The parser can usually be reused.
 
     *Example modification in `src/data/artists.ts`:*
     ```typescript
-    // ... other imports
-
+    // ...
     const datasetsToParse = [
-      {
-        name: 'MUSDB-18',
-        tracklist: musdb18Tracklist,
-        parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2], links: track[3] }),
-      },
-      // Add your new dataset here
+      // ... existing datasets
       {
         name: 'My-Dataset',
-        tracklist: myDatasetTracklist,
-        parser: (track: any[]) => ({ title: track[0], artistName: track[1], genre: track[2], links: track[3] }),
+        filePath: 'datasets/my-dataset.csv', // Relative path from src/data
+        parser: (row: any) => ({
+          title: row.track_title,
+          artistName: row.artist_name,
+          genre: row.genre,
+          links: { bandcampUrl: row.bandcamp_url, spotifyUrl: row.spotify_url },
+        }),
       }
     ];
-
     // ... the rest of the file processes this array automatically.
     ```
 
