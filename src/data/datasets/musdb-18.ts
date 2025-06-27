@@ -6,7 +6,7 @@
  */
 export const musdb18Tracklist: [string, string, string, { bandcampUrl?: string; spotifyUrl?: string }?][] = [
   ['Goodbye Bolero', 'Alexander Ross', 'Pop', { bandcampUrl: 'https://alexanderross.bandcamp.com/track/goodbye-bolero' }],
-  ['Rockshow', 'ANiMAL', 'Rock'],
+  ['Rockshow', 'Kangoro', 'Rock'],
   ['One Minute Smile', 'Actions', 'Alternative Rock'],
   ['Run', 'Arise', 'Metal'],
   ['The End', 'Ben Carr', 'Pop Rock', { spotifyUrl: 'https://open.spotify.com/track/0Sqqz4zEX3a41aA2i3aBqg' }],
