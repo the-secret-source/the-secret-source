@@ -114,16 +114,13 @@ function loadAndParseArtists(): Artist[] {
         artist.tracks.push(newTrack);
 
         // --- Populate Artist-Level Links from Track Data ---
-        // Copy over links from the track to the artist, but only if the artist
-        // doesn't have that link type set yet. This ensures the first link of
-        // a certain type found becomes the artist's primary link for that type.
+        // Overwrites artist-level links with data from each subsequent track.
+        // The last track's links will be the final ones for the artist.
         for (const urlKey in links) {
-          if (!artist[urlKey]) {
-            const trackUrl = links[urlKey];
-            if (trackUrl) {
-              artist[urlKey] = trackUrl;
-              console.log(`[artists.ts] Set ${urlKey} for ${artistName}: ${trackUrl}`);
-            }
+          const trackUrl = links[urlKey];
+          if (trackUrl) {
+            artist[urlKey] = trackUrl;
+            console.log(`[artists.ts] Set/updated ${urlKey} for ${artistName}: ${trackUrl}`);
           }
         }
       }
