@@ -55,7 +55,7 @@ export default function Home() {
           <p className="mt-2 text-lg text-muted-foreground">Find your next favorite artist from open-source music.</p>
         </header>
 
-        <div className="w-full min-h-[460px] flex items-center justify-center">
+        <div className="w-full min-h-[300px] flex items-center justify-center">
           {isDiscovering && !artist ? (
             <ArtistCardSkeleton />
           ) : artist ? (

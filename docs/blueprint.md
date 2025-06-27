@@ -2,10 +2,10 @@
 
 ## Core Features:
 
-- Artist Randomization: Artist Randomizer: Uses an AI tool to fetch a random artist from a curated list of open-source music datasets. It attempts to prioritize artists who may benefit from additional exposure, considering factors like obscurity and number of streams.
-- Artist Profile Presentation: Artist Display: Showcases the selected artist's name, a brief bio (sourced from available data), and links to their music profiles. Allows embedding music when possible
-- Support the Artist CTA: Bandcamp Button: Provides a prominent button to support the artist via Bandcamp or other platforms of choice to buy their albums or tracks.
-- Dataset Management: Open Data Curation: Keep an updated curated dataset of artists who are included in open-source datasets, that the LLM uses as a tool to fetch information about artists to show.
+- Artist Randomizer: Uses an AI tool to fetch a random artist from a curated list of open-source music datasets. It attempts to prioritize artists who may benefit from additional exposure, considering factors like obscurity and number of streams.
+- Artist Display: Showcases the selected artist's name, a brief bio (sourced from available data), and links to their music profiles. Allows embedding music when possible
+- Bandcamp Button: Provides a prominent button to support the artist via Bandcamp or other platforms of choice to buy their albums or tracks.
+- Open Data Curation: Keep an updated curated dataset of artists who are included in open-source datasets, that the LLM uses as a tool to fetch information about artists to show.
 
 ## Style Guidelines:
 
