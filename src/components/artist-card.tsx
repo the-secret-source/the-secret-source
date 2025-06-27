@@ -14,6 +14,7 @@ import BandcampIcon from '@/assets/icons/bandcamp.svg';
 import DiscogsIcon from '@/assets/icons/discogs.svg';
 import SpotifyIcon from '@/assets/icons/spotify.svg';
 import GithubIcon from '@/assets/icons/github.svg';
+import SoundCloudIcon from '@/assets/icons/soundcloud.svg';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -25,7 +26,7 @@ const iconMap: Record<string, React.ElementType> = {
   appleMusicUrl: AppleMusicIcon,
   discogsUrl: DiscogsIcon,
   youtubeUrl: Youtube,
-  soundcloudUrl: Music, // Using a generic icon as a fallback
+  soundcloudUrl: SoundCloudIcon, // Using a generic icon as a fallback
 };
 
 const linkLabels: Record<string, string> = {
