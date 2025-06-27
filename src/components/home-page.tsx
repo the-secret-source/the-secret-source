@@ -9,7 +9,11 @@ import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';
 import { Loader2, Github } from 'lucide-react';
 
-export function HomePage() {
+interface HomePageProps {
+  selectedDatasets: string[];
+}
+
+export function HomePage({ selectedDatasets }: HomePageProps) {
   const [artist, setArtist] = useState<Artist | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,10 +26,13 @@ export function HomePage() {
     setError(null);
     setArtist(null);
     try {
-      // Get a random artist from the local dataset
-      const artistData = await getRandomArtist();
+      // Get a random artist from the local dataset, applying filters
+      const artistData = await getRandomArtist({ datasets: selectedDatasets });
 
       if (!artistData) {
+        if (selectedDatasets.length > 0) {
+          throw new Error("No artists found for the selected datasets. Try adjusting your filters.");
+        }
         throw new Error("No artist data could be loaded. The dataset might be empty or invalid.");
       }
       
@@ -33,11 +40,13 @@ export function HomePage() {
     } catch (e: any) {
       const errorMessage = e.message || "Failed to fetch artist. Please try again.";
       setError(errorMessage);
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not fetch a new artist. Please try again later.',
-      });
+      if (e.message !== "No artists found for the selected datasets. Try adjusting your filters.") {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not fetch a new artist. Please try again later.',
+        });
+      }
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -45,7 +54,16 @@ export function HomePage() {
   };
 
   useEffect(() => {
-    fetchArtist();
+    if (selectedDatasets.length > 0) {
+      fetchArtist();
+    } else {
+      setArtist(null);
+      setError("Please select at least one dataset to discover artists.");
+      setIsLoading(false);
+    }
+  }, [selectedDatasets]);
+
+  useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
 
@@ -79,7 +97,7 @@ export function HomePage() {
         </div>
         
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button onClick={handleNewArtist} disabled={isDiscovering} size="lg" className="shadow-lg">
+          <Button onClick={handleNewArtist} disabled={isDiscovering || selectedDatasets.length === 0} size="lg" className="shadow-lg">
             {isDiscovering ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />

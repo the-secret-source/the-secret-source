@@ -36,6 +36,15 @@ const datasetsToParse = [
 ];
 
 /**
+ * Returns a list of all available dataset names.
+ * @returns An array of dataset names.
+ */
+export function getDatasetNames(): string[] {
+  return datasetsToParse.map((d) => d.name);
+}
+
+
+/**
  * Loads and parses artist data from the defined datasets.
  * This function is for internal use by getArtists().
  * @returns An array of artists.
@@ -124,16 +133,40 @@ function loadAndParseArtists(): Artist[] {
 
 /**
  * Retrieves the list of all artists, loading and caching them if necessary.
+ * Optionally filters artists by dataset.
+ * @param filters - Optional filters to apply.
  * @returns An array of artists.
  */
-export function getArtists(): Artist[] {
+export function getArtists(filters?: { datasets?: string[] }): Artist[] {
     console.log('[artists.ts] getArtists() called.');
-    if (cachedArtists && cachedArtists.length > 0) {
-        console.log(`[artists.ts] Returning cached artists. Count: ${cachedArtists.length}`);
-        return cachedArtists;
+    if (!cachedArtists || cachedArtists.length === 0) {
+        console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
+        cachedArtists = loadAndParseArtists();
+        console.log(`[artists.ts] Caching new artists. Count: ${cachedArtists.length}`);
+    } else {
+      console.log(`[artists.ts] Using cached artists. Count: ${cachedArtists.length}`);
     }
-    console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
-    cachedArtists = loadAndParseArtists();
-    console.log(`[artists.ts] Caching and returning new artists. Count: ${cachedArtists.length}`);
-    return cachedArtists;
+
+    const artistsToFilter = cachedArtists;
+
+    if (!filters?.datasets || filters.datasets.length === 0 || filters.datasets.length === getDatasetNames().length) {
+      console.log('[artists.ts] No dataset filter applied, returning all artists.');
+      return artistsToFilter;
+    }
+    
+    console.log(`[artists.ts] Filtering artists by datasets: ${filters.datasets.join(', ')}`);
+
+    const filteredArtists: Artist[] = [];
+    for (const artist of artistsToFilter) {
+      const filteredTracks = artist.tracks.filter(track => filters.datasets!.includes(track.dataset));
+      if (filteredTracks.length > 0) {
+        filteredArtists.push({
+          ...artist,
+          tracks: filteredTracks,
+        });
+      }
+    }
+    
+    console.log(`[artists.ts] Filtering complete. ${filteredArtists.length} artists matched.`);
+    return filteredArtists;
 }

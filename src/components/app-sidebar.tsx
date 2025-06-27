@@ -1,26 +1,29 @@
-import { getArtists } from "@/data/artists";
-import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail } from "@/components/ui/sidebar";
+'use client';
+
+import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail, SidebarSeparator, SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
 import { Progress } from "@/components/ui/progress";
-import { Music, Users, Link } from "lucide-react";
+import { Music, Users, Link, Filter } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
-export function AppSidebar() {
-  const artists = getArtists();
-  const artistCount = artists.length;
-  const trackCount = artists.reduce((sum, artist) => sum + artist.tracks.length, 0);
+export interface AppSidebarStats {
+  artistCount: number;
+  trackCount: number;
+  artistsWithLinks: number;
+  artistsWithLinksPercentage: number;
+  tracksWithLinks: number;
+  tracksWithLinksPercentage: number;
+}
 
-  const artistsWithLinks = artists.filter(artist => {
-    const hasArtistPageLink = artist.bandcampUrl || artist.spotifyUrl || artist.youtubeUrl || artist.discogsUrl || (artist.otherLinks && artist.otherLinks.length > 0);
-    const hasTrackLink = artist.tracks.some(track => track.bandcampUrl || track.spotifyUrl);
-    return hasArtistPageLink || hasTrackLink;
-  }).length;
-  
-  const artistsWithLinksPercentage = artistCount > 0 ? Math.round((artistsWithLinks / artistCount) * 100) : 0;
-  
-  const tracksWithLinks = artists.reduce((sum, artist) => {
-      return sum + artist.tracks.filter(track => track.bandcampUrl || track.spotifyUrl).length;
-  }, 0);
+interface AppSidebarProps {
+  stats: AppSidebarStats;
+  allDatasetNames: string[];
+  selectedDatasets: string[];
+  onDatasetToggle: (datasetName: string) => void;
+}
 
-  const tracksWithLinksPercentage = trackCount > 0 ? Math.round((tracksWithLinks / trackCount) * 100) : 0;
+export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle }: AppSidebarProps) {
+  const { artistCount, trackCount, artistsWithLinks, artistsWithLinksPercentage, tracksWithLinks, tracksWithLinksPercentage } = stats;
 
   return (
     <Sidebar>
@@ -75,6 +78,29 @@ export function AppSidebar() {
               <Progress value={tracksWithLinksPercentage} className="h-2 group-data-[collapsible=icon]:hidden [&>div]:bg-accent" />
             </div>
           </SidebarMenuItem>
+
+          <SidebarSeparator />
+
+          <SidebarGroup>
+            <SidebarGroupLabel className="flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              Filter by Dataset
+            </SidebarGroupLabel>
+            <div className="flex flex-col gap-2 pt-2 group-data-[collapsible=icon]:hidden">
+              {allDatasetNames.map(name => (
+                <div key={name} className="flex items-center space-x-2 pl-2">
+                  <Checkbox 
+                    id={name} 
+                    checked={selectedDatasets.includes(name)}
+                    onCheckedChange={() => onDatasetToggle(name)}
+                  />
+                  <Label htmlFor={name} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
+                    {name}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </SidebarGroup>
         </SidebarMenu>
       </SidebarContent>
     </Sidebar>
