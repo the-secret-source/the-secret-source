@@ -63,7 +63,8 @@ function parseAndMergeArtists(datasets: typeof datasetsToParse): Artist[] {
     });
 
     for (const rawTrack of parsedCsv.data as any[]) {
-      if (!rawTrack.artist_name || !rawTrack.track_title) {
+      // A more robust check to ensure that we only process valid track data.
+      if (!rawTrack || !rawTrack.artist_name || !rawTrack.track_title) {
         continue;
       }
       
