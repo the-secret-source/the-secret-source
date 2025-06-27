@@ -1,4 +1,4 @@
-import type { RandomArtistOutput } from '@/ai/flows/artist-randomizer';
+import type { Artist } from '@/data/artists';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Globe, Youtube } from 'lucide-react';
@@ -8,7 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './
 import { Badge } from './ui/badge';
 
 interface ArtistCardProps {
-  artist: RandomArtistOutput;
+  artist: Artist;
 }
 
 const SocialLink = ({ href, children, label }: { href: string; children: React.ReactNode, label: string }) => (
@@ -38,9 +38,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
       <CardHeader className="text-center pb-2">
         <CardTitle className="text-3xl font-headline">{artist.artistName}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-center text-muted-foreground text-lg leading-relaxed">{artist.genre}</p>
-
+      <CardContent>
         {artist.tracks && artist.tracks.length > 0 && (
           <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
             <AccordionItem value="item-1">

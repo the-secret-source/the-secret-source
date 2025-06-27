@@ -1,70 +1,18 @@
 'use server';
 
 /**
- * @fileOverview A flow to select a random artist from a curated list.
+ * @fileOverview A function to select a random artist from a curated list.
  *
  * - getRandomArtist - A function that returns a random artist's information.
- * - RandomArtistOutput - The output type for the getRandomArtist function.
  */
 
-import { z } from 'genkit';
-import { artists } from '@/data/artists';
-import { findArtistLinks } from './find-artist-links';
-import { ai } from '@/ai/genkit';
+import { artists, type Artist } from '@/data/artists';
 
-const RandomArtistOutputSchema = z.object({
-  artistName: z.string().describe('The name of the artist.'),
-  genre: z.string().describe('The genre of the artist.'),
-  tracks: z.array(z.object({
-    title: z.string().describe("The title of the track."),
-    dataset: z.string().describe("The dataset the track appeared in."),
-    bandcampUrl: z.string().url().optional().describe('The URL of the track on Bandcamp, if available.'),
-    spotifyUrl: z.string().url().optional().describe('The URL of the track on Spotify, if available.'),
-  })).describe('A list of tracks by the artist, including the dataset they appeared in.'),
-  bandcampUrl: z.string().optional().describe('The URL of the artist on Bandcamp, if available.'),
-  spotifyUrl: z.string().optional().describe('The URL of the artist on Spotify, if available.'),
-  youtubeUrl: z.string().optional().describe('The URL of the artist on YouTube, if available.'),
-  otherLinks: z.array(z.string()).optional().describe('Other relevant links related to the artist.'),
-});
-export type RandomArtistOutput = z.infer<typeof RandomArtistOutputSchema>;
+export async function getRandomArtist(): Promise<Artist> {
+  // 1. Select a random artist from the curated list.
+  const randomIndex = Math.floor(Math.random() * artists.length);
+  const selectedArtist = artists[randomIndex];
 
-export async function getRandomArtist(): Promise<RandomArtistOutput> {
-  return randomArtistFlow();
+  // 2. Return the artist data.
+  return selectedArtist;
 }
-
-const randomArtistFlow = ai.defineFlow(
-  {
-    name: 'randomArtistFlow',
-    outputSchema: RandomArtistOutputSchema,
-  },
-  async () => {
-    // 1. Select a random artist from the curated list.
-    const randomIndex = Math.floor(Math.random() * artists.length);
-    const selectedArtist = artists[randomIndex];
-
-    // 2. If links are missing, search for them.
-    const links =
-      selectedArtist.bandcampUrl || selectedArtist.spotifyUrl || selectedArtist.youtubeUrl
-        ? {
-            bandcampUrl: selectedArtist.bandcampUrl,
-            spotifyUrl: selectedArtist.spotifyUrl,
-            youtubeUrl: selectedArtist.youtubeUrl,
-            otherLinks: selectedArtist.otherLinks,
-          }
-        : await findArtistLinks({
-            artistName: selectedArtist.artistName,
-            artistGenre: selectedArtist.genre,
-          });
-
-    // 3. Combine data and return.
-    return {
-      artistName: selectedArtist.artistName,
-      genre: selectedArtist.genre,
-      tracks: selectedArtist.tracks,
-      bandcampUrl: selectedArtist.bandcampUrl || links.bandcampUrl,
-      spotifyUrl: selectedArtist.spotifyUrl || links.spotifyUrl,
-      youtubeUrl: selectedArtist.youtubeUrl || links.youtubeUrl,
-      otherLinks: selectedArtist.otherLinks || links.otherLinks,
-    };
-  }
-);

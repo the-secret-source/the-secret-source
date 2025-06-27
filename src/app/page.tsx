@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
-import { getRandomArtist, type RandomArtistOutput } from '@/ai/flows/artist-randomizer';
+import { getRandomArtist } from '@/ai/flows/artist-randomizer';
+import { type Artist } from '@/data/artists';
 import { useToast } from '@/hooks/use-toast';
 import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';
 import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-  const [artist, setArtist] = useState<RandomArtistOutput | null>(null);
+  const [artist, setArtist] = useState<Artist | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
