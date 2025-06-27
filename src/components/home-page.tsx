@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';
 import { Loader2 } from 'lucide-react';
-import GithubIcon from '@/assets/icons/github.svg';
+import Image from 'next/image';
 
 interface HomePageProps {
   selectedDatasets: string[];
@@ -126,7 +126,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
         {year && <p>&copy; {year} The Secret Source. All Rights Reserved.</p>}
         <Button asChild variant="outline" size="sm">
           <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-            <GithubIcon className="mr-2 h-5 w-5" />
+            <Image src="https://placehold.co/20x20.png" alt="GitHub icon" width={20} height={20} data-ai-hint="github" />
             Contribute on GitHub
           </a>
         </Button>

@@ -1,34 +1,14 @@
 import type { Artist } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Music } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
-
-// Placeholder imports for your local SVG files.
-// You will need to create these SVG files in the `src/assets/icons/` directory.
-// For example: src/assets/icons/bandcamp.svg
-import AppleMusicIcon from '@/assets/icons/apple-music.svg';
-import BandcampIcon from '@/assets/icons/bandcamp.svg';
-import DiscogsIcon from '@/assets/icons/discogs.svg';
-import SpotifyIcon from '@/assets/icons/spotify.svg';
-import GithubIcon from '@/assets/icons/github.svg';
-import SoundCloudIcon from '@/assets/icons/soundcloud.svg';
-import YoutubeIcon from '@/assets/icons/youtube.svg';
+import Image from 'next/image';
 
 interface ArtistCardProps {
   artist: Artist;
 }
-
-const iconMap: Record<string, React.ElementType> = {
-  bandcampUrl: BandcampIcon,
-  spotifyUrl: SpotifyIcon,
-  appleMusicUrl: AppleMusicIcon,
-  discogsUrl: DiscogsIcon,
-  youtubeUrl: YoutubeIcon,
-  soundcloudUrl: SoundCloudIcon, // Using a generic icon as a fallback
-};
 
 const linkLabels: Record<string, string> = {
   bandcampUrl: 'Bandcamp',
@@ -44,18 +24,15 @@ const linkLabels: Record<string, string> = {
 export function ArtistCard({ artist }: ArtistCardProps) {
 
   const renderLink = (url: string, key: string) => {
-
-    console.log('Rendering link for', key, 'with URL', url);
-
-    const Icon = iconMap[key] || Music;
     const label = linkLabels[key] || 'Listen';
+    const hint = key.replace('Url', '');
 
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`} className="block h-5 w-5">
-              <Icon className="h-full w-full text-muted-foreground transition-colors hover:text-foreground" />
+            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`} className="block h-5 w-5 relative">
+              <Image src="https://placehold.co/20x20.png" alt={`${label} icon`} layout="fill" objectFit="contain" data-ai-hint={hint} />
             </a>
           </TooltipTrigger>
           <TooltipContent>
@@ -114,7 +91,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         ) : (
           <Button asChild variant="outline">
             <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-              <GithubIcon className="mr-2 h-5 w-5" />
+              <Image src="https://placehold.co/20x20.png" alt="GitHub icon" width={20} height={20} data-ai-hint="github" />
               Know this artist? Contribute
             </a>
           </Button>

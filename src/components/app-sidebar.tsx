@@ -41,7 +41,7 @@ const linkTypeFilters = [
   { id: 'youtubeUrl', label: 'YouTube' },
   { id: 'soundcloudUrl', label: 'SoundCloud' },
   { id: 'weathervaneUrl', label: 'Weathervane' },
-  { id: 'mixRescueUrl', label: 'MixRescue' },
+  { id: 'mixRescueUrl', label: 'Mix Rescue' },
   { id: 'otherLinks', label: 'Other' },
 ];
 
