@@ -148,46 +148,15 @@ function loadAndParseArtists(): Artist[] {
   return finalArtists;
 }
 
-
 /**
  * Retrieves the list of all artists, loading and caching them if necessary.
- * Optionally filters artists by dataset.
+ * Optionally filters artists by dataset and link types.
  * @param filters - Optional filters to apply.
  * @returns An array of artists.
  */
 export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[] }): Artist[] {
     console.log('[artists.ts] getArtists() called with filters:', filters);
 
-    const getArtistCategory = (artist: Artist): 'direct' | 'streaming' | 'other' | 'none' => {
-      const directSupportKeys = ['bandcampUrl', 'discogsUrl'];
-      const streamingKeys = ['spotifyUrl', 'appleMusicUrl'];
-      const otherLinkKeys = ['youtubeUrl', 'otherLinks', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl'];
-
-      const hasLink = (obj: any, keys: string[]) => {
-        if (!obj) return false;
-        return keys.some(key => {
-          if (key === 'otherLinks') {
-            return Array.isArray(obj[key]) && obj[key].length > 0;
-          }
-          return !!obj[key];
-        });
-      }
-      
-      const hasArtistDirectLink = hasLink(artist, directSupportKeys);
-      const hasTrackDirectLink = artist.tracks.some(track => hasLink(track, directSupportKeys));
-      if (hasArtistDirectLink || hasTrackDirectLink) return 'direct';
-
-      const hasArtistStreamingLink = hasLink(artist, streamingKeys);
-      const hasTrackStreamingLink = artist.tracks.some(track => hasLink(track, streamingKeys));
-      if (hasArtistStreamingLink || hasTrackStreamingLink) return 'streaming';
-
-      const hasArtistOtherLink = hasLink(artist, otherLinkKeys);
-      const hasTrackOtherLink = artist.tracks.some(track => hasLink(track, otherLinkKeys));
-      if (hasArtistOtherLink || hasTrackOtherLink) return 'other';
-
-      return 'none';
-    };
-    
     if (!cachedArtists || cachedArtists.length === 0) {
         console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
         cachedArtists = loadAndParseArtists();
@@ -198,18 +167,29 @@ export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[]
 
     let artistsToFilter = cachedArtists;
 
+    // Filter by link types if provided
     if (filters?.linkTypes) {
       if (filters.linkTypes.length === 0) {
         return []; // Return empty if no link types are selected
       }
       console.log('[artists.ts] Filtering for artists by link types:', filters.linkTypes);
       artistsToFilter = artistsToFilter.filter(artist => {
-          const category = getArtistCategory(artist);
-          return filters.linkTypes!.includes(category);
+        // Check if the artist or any of their tracks has at least one of the selected link types
+        const hasRequiredLink = (obj: any): boolean => {
+          return filters!.linkTypes!.some(linkType => {
+            if (linkType === 'otherLinks') {
+              return Array.isArray(obj[linkType]) && obj[linkType].length > 0;
+            }
+            return !!obj[linkType];
+          });
+        };
+        
+        return hasRequiredLink(artist) || artist.tracks.some(hasRequiredLink);
       });
       console.log(`[artists.ts] After link type filtering: ${artistsToFilter.length} artists remain.`);
     }
 
+    // Filter by dataset if provided
     if (filters?.datasets && filters.datasets.length > 0 && filters.datasets.length < getDatasetNames().length) {
       console.log(`[artists.ts] Filtering artists by datasets: ${filters.datasets.join(', ')}`);
 

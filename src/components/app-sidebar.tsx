@@ -34,9 +34,15 @@ interface AppSidebarProps {
 }
 
 const linkTypeFilters = [
-  { id: 'direct', label: 'Direct Support' },
-  { id: 'streaming', label: 'Streaming Only' },
-  { id: 'other', label: 'Other' },
+  { id: 'bandcampUrl', label: 'Bandcamp' },
+  { id: 'spotifyUrl', label: 'Spotify' },
+  { id: 'appleMusicUrl', label: 'Apple Music' },
+  { id: 'discogsUrl', label: 'Discogs' },
+  { id: 'youtubeUrl', label: 'YouTube' },
+  { id: 'soundcloudUrl', label: 'SoundCloud' },
+  { id: 'weathervaneUrl', label: 'Weathervane' },
+  { id: 'mixRescueUrl', label: 'MixRescue' },
+  { id: 'otherLinks', label: 'Other' },
 ];
 
 export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, selectedLinkTypes, onLinkTypeToggle }: AppSidebarProps) {

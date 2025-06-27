@@ -10,9 +10,14 @@ interface MainLayoutProps {
   stats: AppSidebarStats;
 }
 
+const allLinkTypeKeys = [
+  'bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl', 
+  'youtubeUrl', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl', 'otherLinks'
+];
+
 export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
   const [selectedDatasets, setSelectedDatasets] = useState<string[]>([]);
-  const [selectedLinkTypes, setSelectedLinkTypes] = useState<string[]>(['direct', 'streaming', 'other']);
+  const [selectedLinkTypes, setSelectedLinkTypes] = useState<string[]>(allLinkTypeKeys);
   
   useEffect(() => {
     setSelectedDatasets(allDatasetNames);

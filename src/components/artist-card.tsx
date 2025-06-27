@@ -14,6 +14,14 @@ interface ArtistCardProps {
 
 type LinkType = 'direct' | 'streaming' | 'other';
 
+const getLinkCategory = (key: string): LinkType => {
+  const directKeys = ['bandcampUrl', 'discogsUrl'];
+  const streamingKeys = ['spotifyUrl', 'appleMusicUrl'];
+  if (directKeys.includes(key)) return 'direct';
+  if (streamingKeys.includes(key)) return 'streaming';
+  return 'other';
+};
+
 const SocialLink = ({ href, children, label, linkType }: { href: string; children: React.ReactNode, label: string; linkType: LinkType }) => {
   const colorClass = {
     direct: 'bg-accent',
@@ -107,27 +115,27 @@ export function ArtistCard({ artist }: ArtistCardProps) {
       <CardFooter className="flex items-center justify-between pt-4 border-t">
         <div className="flex items-center gap-4 flex-wrap">
           {artist.discogsUrl && (
-            <SocialLink href={artist.discogsUrl} label="Discogs" linkType="direct">
+            <SocialLink href={artist.discogsUrl} label="Discogs" linkType={getLinkCategory('discogsUrl')}>
               <DiscogsIcon className="h-6 w-6" />
             </SocialLink>
           )}
           {artist.spotifyUrl && (
-            <SocialLink href={artist.spotifyUrl} label="Spotify" linkType="streaming">
+            <SocialLink href={artist.spotifyUrl} label="Spotify" linkType={getLinkCategory('spotifyUrl')}>
               <SpotifyIcon className="h-6 w-6" />
             </SocialLink>
           )}
           {artist.appleMusicUrl && (
-            <SocialLink href={artist.appleMusicUrl} label="Apple Music" linkType="streaming">
+            <SocialLink href={artist.appleMusicUrl} label="Apple Music" linkType={getLinkCategory('appleMusicUrl')}>
               <AppleMusicIcon className="h-6 w-6" />
             </SocialLink>
           )}
           {artist.youtubeUrl && (
-            <SocialLink href={artist.youtubeUrl} label="YouTube" linkType="other">
+            <SocialLink href={artist.youtubeUrl} label="YouTube" linkType={getLinkCategory('youtubeUrl')}>
               <Youtube className="h-6 w-6" />
             </SocialLink>
           )}
           {artist.otherLinks?.map((link, index) => (
-            <SocialLink key={index} href={link} label="their website" linkType="other">
+            <SocialLink key={index} href={link} label="their website" linkType={getLinkCategory('otherLinks')}>
               <Globe className="h-6 w-6" />
             </SocialLink>
           ))}
