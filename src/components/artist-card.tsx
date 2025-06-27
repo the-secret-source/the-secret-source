@@ -5,7 +5,14 @@ import { Github, Music, Youtube } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Badge } from './ui/badge';
-import { AppleMusicIcon, BandcampIcon, DiscogsIcon, SpotifyIcon } from '@/icons';
+
+// Placeholder imports for your local SVG files.
+// You will need to create these SVG files in the `src/assets/icons/` directory.
+// For example: src/assets/icons/bandcamp.svg
+import AppleMusicIcon from '@/assets/icons/apple-music.svg';
+import BandcampIcon from '@/assets/icons/bandcamp.svg';
+import DiscogsIcon from '@/assets/icons/discogs.svg';
+import SpotifyIcon from '@/assets/icons/spotify.svg';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -17,7 +24,7 @@ const iconMap: Record<string, React.ElementType> = {
   appleMusicUrl: AppleMusicIcon,
   discogsUrl: DiscogsIcon,
   youtubeUrl: Youtube,
-  soundcloudUrl: Music,
+  soundcloudUrl: Music, // Using a generic icon as a fallback
 };
 
 const linkLabels: Record<string, string> = {
@@ -30,11 +37,6 @@ const linkLabels: Record<string, string> = {
   weathervaneUrl: 'Weathervane Music',
   mixRescueUrl: 'MixRescue',
 };
-
-const linkOrder = [
-  'bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl', 
-  'youtubeUrl', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl', 'otherLinks'
-];
 
 export function ArtistCard({ artist }: ArtistCardProps) {
 
