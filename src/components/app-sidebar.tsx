@@ -45,9 +45,7 @@ const linkTypeFilters = [
   { id: 'appleMusicUrl', label: 'Apple Music' },
   { id: 'youtubeUrl', label: 'YouTube' },
   { id: 'soundcloudUrl', label: 'SoundCloud' },
-  { id: 'weathervaneUrl', label: 'Weathervane' },
-  { id: 'mixRescueUrl', label: 'Mix Rescue' },
-  { id: 'otherLinks', label: 'Other' },
+  { id: 'other', label: 'Other' },
 ];
 
 const linkTypeColors: Record<string, string> = {
@@ -57,9 +55,7 @@ const linkTypeColors: Record<string, string> = {
   appleMusicUrl: 'bg-chart-2',
   youtubeUrl: 'bg-chart-3',
   soundcloudUrl: 'bg-chart-3',
-  weathervaneUrl: 'bg-chart-4',
-  mixRescueUrl: 'bg-chart-4',
-  otherLinks: 'bg-chart-4',
+  other: 'bg-chart-4',
 };
 
 export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, selectedLinkTypes, onLinkTypeToggle }: AppSidebarProps) {

@@ -164,10 +164,14 @@ export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[]
       if (filters.linkTypes.length === 0) {
         return []; // Return empty if no link types are selected
       }
+
+      const otherKeys = ['weathervaneUrl', 'mixRescueUrl', 'otherLinks'];
+      const expandedLinkTypes = filters.linkTypes.flatMap(lt => (lt === 'other' ? otherKeys : lt));
+
       artistsToFilter = artistsToFilter.filter(artist => {
         // Check if the artist or any of their tracks has at least one of the selected link types
         const hasRequiredLink = (obj: any): boolean => {
-          return filters!.linkTypes!.some(linkType => {
+          return expandedLinkTypes.some(linkType => {
             if (linkType === 'otherLinks') {
               return Array.isArray(obj[linkType]) && obj[linkType].length > 0;
             }
