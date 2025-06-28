@@ -94,12 +94,26 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
       <div className="fixed bottom-5 right-5 z-10 md:hidden">
         <SidebarTrigger className="h-14 w-14 rounded-full shadow-lg" />
       </div>
-      <div className="w-full max-w-2xl space-y-8">
+      <div className="w-full max-w-2xl flex flex-col gap-8">
         <header className="text-center">
           <h1 className="text-4xl sm:text-5xl font-bold font-code text-primary">the secret source</h1>
           <p className="mt-2 text-lg font-code text-muted-foreground">supporting the artists whose works have made our works possible</p>
         </header>
 
+        {/* Button appears first on mobile, and last on desktop thanks to sm:order-last */}
+        <div className="flex justify-center sm:order-last">
+          <Button onClick={handleNewArtist} disabled={isDiscovering || !canDiscover} size="lg" className="shadow-lg">
+            {isDiscovering ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Summoning...
+              </>
+            ) : (
+              "Discover New Artist"
+            )}
+          </Button>
+        </div>
+        
         <div className="w-full min-h-[300px] flex items-center justify-center">
           {isDiscovering ? (
             <ArtistCardSkeleton />
@@ -112,19 +126,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
             </div>
           ) : null}
         </div>
-        
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button onClick={handleNewArtist} disabled={isDiscovering || !canDiscover} size="lg" className="shadow-lg">
-            {isDiscovering ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Summoning...
-              </>
-            ) : (
-              "Discover New Artist"
-            )}
-          </Button>
-        </div>
+
       </div>
       <footer className="mt-auto flex flex-col items-center gap-4 py-6 text-center text-sm text-muted-foreground">
         {year && <p>&copy; {year} Karn Watcharasupat and contributors</p>}
