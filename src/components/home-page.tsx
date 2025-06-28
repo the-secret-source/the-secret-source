@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { getRandomArtist } from '@/ai/flows/artist-randomizer';
 import { type Artist } from '@/lib/types';
@@ -25,7 +25,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
   const { toast } = useToast();
   const [year, setYear] = useState<number | null>(null);
 
-  const fetchArtist = async () => {
+  const fetchArtist = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     setArtist(null);
@@ -61,7 +61,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedDatasets, selectedLinkTypes, toast]);
 
   useEffect(() => {
     if (selectedDatasets.length > 0 && selectedLinkTypes.length > 0) {
@@ -75,20 +75,45 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
       }
       setIsLoading(false);
     }
-  }, [selectedDatasets, selectedLinkTypes]);
+  }, [fetchArtist, selectedDatasets, selectedLinkTypes]);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
 
-  const handleNewArtist = () => {
+  const handleNewArtist = useCallback(() => {
     startTransition(() => {
       fetchArtist();
     });
-  };
+  }, [fetchArtist]);
 
   const isDiscovering = isPending || isLoading;
   const canDiscover = selectedDatasets.length > 0 && selectedLinkTypes.length > 0;
+  
+  // Global hotkey for discovering a new artist
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Don't trigger while typing in an input/textarea
+      const target = event.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+      
+      // Trigger on spacebar press, but not if a button is already focused (to avoid double trigger)
+      if (event.code === 'Space' && document.activeElement?.tagName !== 'BUTTON') {
+        event.preventDefault();
+        if (canDiscover && !isDiscovering) {
+          handleNewArtist();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [canDiscover, isDiscovering, handleNewArtist]);
+
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12">
@@ -101,7 +126,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
           <p className="mt-2 text-lg font-code text-muted-foreground">supporting the artists whose works have made our works possible</p>
         </header>
 
-        <div className="flex justify-center sm:order-first">
+        <div className="flex flex-col items-center justify-center gap-2 md:order-2">
           <Button onClick={handleNewArtist} disabled={isDiscovering || !canDiscover} size="lg" className="shadow-lg">
             {isDiscovering ? (
               <>
@@ -112,9 +137,10 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
               "Discover New Artist"
             )}
           </Button>
+          <p className="text-xs text-muted-foreground hidden md:block">or press the spacebar</p>
         </div>
         
-        <div className="w-full min-h-[300px] flex items-center justify-center" role="status" aria-live="polite">
+        <div className="w-full min-h-[300px] flex items-center justify-center md:order-1" role="status" aria-live="polite">
           {isDiscovering ? (
             <ArtistCardSkeleton />
           ) : artist ? (
