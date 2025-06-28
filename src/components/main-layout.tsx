@@ -40,7 +40,12 @@ export function MainLayout({ allDatasetNames, artists }: MainLayoutProps) {
     const directSupportKeys = ['bandcampUrl', 'discogsUrl'];
     const definitelyMonetizedKeys = ['spotifyUrl', 'appleMusicUrl'];
     const potentiallyMonetizedKeys = ['youtubeUrl', 'soundcloudUrl'];
-    const otherLinkKeys = ['otherLinks', 'weathervaneUrl', 'mixRescueUrl'];
+    
+    const primaryLinkKeys = new Set([
+      ...directSupportKeys,
+      ...definitelyMonetizedKeys,
+      ...potentiallyMonetizedKeys
+    ]);
 
     const hasLink = (obj: any, keys: string[]) => {
       if (!obj) return false;
@@ -52,23 +57,25 @@ export function MainLayout({ allDatasetNames, artists }: MainLayoutProps) {
       });
     }
 
+    const hasOtherLink = (obj: any): boolean => {
+      if (!obj) return false;
+      for (const key in obj) {
+        if ((key.endsWith('Url') || key === 'otherLinks') && !primaryLinkKeys.has(key)) {
+          if (key === 'otherLinks') {
+            if (Array.isArray(obj[key]) && obj[key].length > 0) return true;
+          } else if (obj[key]) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
     const artistsCategorized = filteredArtists.map(artist => {
-      const hasArtistDirectLink = hasLink(artist, directSupportKeys);
-      const hasTrackDirectLink = artist.tracks.some(track => hasLink(track, directSupportKeys));
-      if (hasArtistDirectLink || hasTrackDirectLink) return 'direct';
-
-      const hasArtistDefinitelyMonetizedLink = hasLink(artist, definitelyMonetizedKeys);
-      const hasTrackDefinitelyMonetizedLink = artist.tracks.some(track => hasLink(track, definitelyMonetizedKeys));
-      if (hasArtistDefinitelyMonetizedLink || hasTrackDefinitelyMonetizedLink) return 'definitelyMonetized';
-
-      const hasArtistPotentiallyMonetizedLink = hasLink(artist, potentiallyMonetizedKeys);
-      const hasTrackPotentiallyMonetizedLink = artist.tracks.some(track => hasLink(track, potentiallyMonetizedKeys));
-      if (hasArtistPotentiallyMonetizedLink || hasTrackPotentiallyMonetizedLink) return 'potentiallyMonetized';
-
-      const hasArtistOtherLink = hasLink(artist, otherLinkKeys);
-      const hasTrackOtherLink = artist.tracks.some(track => hasLink(track, otherLinkKeys));
-      if (hasArtistOtherLink || hasTrackOtherLink) return 'other';
-
+      if (hasLink(artist, directSupportKeys) || artist.tracks.some(track => hasLink(track, directSupportKeys))) return 'direct';
+      if (hasLink(artist, definitelyMonetizedKeys) || artist.tracks.some(track => hasLink(track, definitelyMonetizedKeys))) return 'definitelyMonetized';
+      if (hasLink(artist, potentiallyMonetizedKeys) || artist.tracks.some(track => hasLink(track, potentiallyMonetizedKeys))) return 'potentiallyMonetized';
+      if (hasOtherLink(artist) || artist.tracks.some(hasOtherLink)) return 'other';
       return 'none';
     });
 
@@ -81,7 +88,7 @@ export function MainLayout({ allDatasetNames, artists }: MainLayoutProps) {
       if (hasLink(track, directSupportKeys)) return 'direct';
       if (hasLink(track, definitelyMonetizedKeys)) return 'definitelyMonetized';
       if (hasLink(track, potentiallyMonetizedKeys)) return 'potentiallyMonetized';
-      if (hasLink(track, otherLinkKeys)) return 'other';
+      if (hasOtherLink(track)) return 'other';
       return 'none';
     });
     

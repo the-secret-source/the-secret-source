@@ -18,8 +18,7 @@ const linkLabels: Record<string, string> = {
   discogsUrl: 'Discogs',
   youtubeUrl: 'YouTube',
   soundcloudUrl: 'SoundCloud',
-  weathervaneUrl: 'Weathervane Music',
-  mixRescueUrl: 'Mix Rescue',
+  other: 'Listen',
 };
 
 const iconMap: Record<string, React.ElementType> = {
@@ -29,9 +28,9 @@ const iconMap: Record<string, React.ElementType> = {
   discogsUrl: SiDiscogs,
   youtubeUrl: FaYoutube,
   soundcloudUrl: FaSoundcloud,
-  weathervaneUrl: FaLink,
-  mixRescueUrl: FaLink,
 };
+
+const primaryLinkKeys = ['bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl', 'youtubeUrl', 'soundcloudUrl'];
 
 export function ArtistCard({ artist }: ArtistCardProps) {
   const renderLink = (url: string, key: string) => {
@@ -66,25 +65,39 @@ export function ArtistCard({ artist }: ArtistCardProps) {
               <AccordionTrigger className="text-base">Featured Tracks</AccordionTrigger>
               <AccordionContent>
                 <ul className="text-left divide-y divide-border">
-                  {artist.tracks.map((track, index) => (
-                    <li key={index} className="flex flex-col py-3 sm:flex-row sm:items-center sm:justify-between">
-                      <span className="font-medium text-foreground">{track.title}</span>
-                      <div className="flex w-full items-center justify-between pt-3 sm:w-auto sm:pt-0 sm:justify-end sm:gap-6">
-                        <div className="flex items-center gap-6">
-                          {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
-                          {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
-                          {track.appleMusicUrl && renderLink(track.appleMusicUrl, 'appleMusicUrl')}
-                          {track.discogsUrl && renderLink(track.discogsUrl, 'discogsUrl')}
-                          {track.youtubeUrl && renderLink(track.youtubeUrl, 'youtubeUrl')}
-                          {track.soundcloudUrl && renderLink(track.soundcloudUrl, 'soundcloudUrl')}
+                  {artist.tracks.map((track, index) => {
+                    const allLinks: { key: string; url: string }[] = [];
+                    for (const key in track) {
+                      if (key.endsWith('Url') && track[key]) {
+                        allLinks.push({ key, url: track[key] });
+                      }
+                    }
+                    if (track.otherLinks && Array.isArray(track.otherLinks) && track.otherLinks.length > 0) {
+                      allLinks.push({ key: 'other', url: track.otherLinks[0] });
+                    }
+
+                    const primaryLinks = allLinks.filter(link => primaryLinkKeys.includes(link.key));
+                    const otherLinks = allLinks.filter(link => !primaryLinkKeys.includes(link.key));
+
+                    return (
+                      <li key={index} className="flex flex-col py-3 sm:flex-row sm:items-center sm:justify-between">
+                        <span className="font-medium text-foreground">{track.title}</span>
+                        <div className="flex w-full items-center justify-between pt-3 sm:w-auto sm:pt-0 sm:justify-end sm:gap-6">
+                          <div className="flex items-center gap-6">
+                            {primaryLinks.length > 0
+                              ? primaryLinks.map(link => renderLink(link.url, link.key))
+                              : otherLinks.length > 0
+                                ? renderLink(otherLinks[0].url, 'other')
+                                : null}
+                          </div>
+                          <div className="flex flex-shrink-0 items-center gap-2 flex-wrap justify-end">
+                            <Badge variant="secondary" className="whitespace-nowrap">{track.dataset}</Badge>
+                            {track.source && <Badge variant="outline" className="whitespace-nowrap">{track.source}</Badge>}
+                          </div>
                         </div>
-                        <div className="flex flex-shrink-0 items-center gap-2 flex-wrap justify-end">
-                          <Badge variant="secondary" className="whitespace-nowrap">{track.dataset}</Badge>
-                          {track.source && <Badge variant="outline" className="whitespace-nowrap">{track.source}</Badge>}
-                        </div>
-                      </div>
-                    </li>
-                  ))}
+                      </li>
+                    );
+                  })}
                 </ul>
               </AccordionContent>
             </AccordionItem>
