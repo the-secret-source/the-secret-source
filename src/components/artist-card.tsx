@@ -32,27 +32,32 @@ const iconMap: Record<string, React.ElementType> = {
 
 const primaryLinkKeys = ['bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl', 'youtubeUrl', 'soundcloudUrl'];
 
-export function ArtistCard({ artist }: ArtistCardProps) {
-  const renderLink = (url: string, key: string) => {
-    const label = linkLabels[key] || 'Listen';
-    const IconComponent = iconMap[key] || FaLink;
+interface LinkIconProps {
+  url: string;
+  linkKey: string;
+}
 
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
-              <IconComponent className="h-10 w-10 text-muted-foreground hover:text-primary transition-colors" />
-            </a>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{label}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  };
-  
+function LinkIcon({ url, linkKey }: LinkIconProps) {
+  const label = linkLabels[linkKey] || 'Listen';
+  const IconComponent = iconMap[linkKey] || FaLink;
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
+            <IconComponent className="h-10 w-10 text-muted-foreground hover:text-primary transition-colors" />
+          </a>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+export function ArtistCard({ artist }: ArtistCardProps) {
   return (
     <Card className="w-full max-w-2xl animate-in fade-in-0 duration-700 shadow-xl">
       <CardHeader className="text-center pb-2">
@@ -80,14 +85,14 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                     const otherLinks = allLinks.filter(link => !primaryLinkKeys.includes(link.key));
 
                     return (
-                      <li key={index} className="flex flex-col py-3 sm:flex-row sm:items-center sm:justify-between">
+                      <li key={`${track.title}-${index}`} className="flex flex-col py-3 sm:flex-row sm:items-center sm:justify-between">
                         <span className="font-medium text-foreground">{track.title}</span>
                         <div className="flex w-full items-center justify-between pt-3 sm:w-auto sm:pt-0 sm:justify-end sm:gap-6">
                           <div className="flex items-center gap-6">
                             {primaryLinks.length > 0
-                              ? primaryLinks.map(link => renderLink(link.url, link.key))
+                              ? primaryLinks.map(link => <LinkIcon key={link.key} url={link.url} linkKey={link.key} />)
                               : otherLinks.length > 0
-                                ? renderLink(otherLinks[0].url, 'other')
+                                ? <LinkIcon url={otherLinks[0].url} linkKey="other" />
                                 : null}
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2 flex-wrap justify-end">
