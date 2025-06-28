@@ -90,7 +90,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
   const canDiscover = selectedDatasets.length > 0 && selectedLinkTypes.length > 0;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12">
       <div className="fixed bottom-5 right-5 z-10 md:hidden">
         <SidebarTrigger className="h-14 w-14 rounded-full shadow-lg" />
       </div>
@@ -100,7 +100,6 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
           <p className="mt-2 text-lg font-code text-muted-foreground">supporting the artists whose works have made our works possible</p>
         </header>
 
-        {/* Button appears first on mobile, and last on desktop thanks to sm:order-last */}
         <div className="flex justify-center sm:order-last">
           <Button onClick={handleNewArtist} disabled={isDiscovering || !canDiscover} size="lg" className="shadow-lg">
             {isDiscovering ? (
@@ -114,13 +113,13 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
           </Button>
         </div>
         
-        <div className="w-full min-h-[300px] flex items-center justify-center">
+        <div className="w-full min-h-[300px] flex items-center justify-center" role="status" aria-live="polite">
           {isDiscovering ? (
             <ArtistCardSkeleton />
           ) : artist ? (
             <ArtistCard key={artist.artistName} artist={artist} />
           ) : error ? (
-            <div className="text-center text-destructive-foreground bg-destructive/80 p-4 rounded-md">
+            <div role="alert" className="text-center text-destructive-foreground bg-destructive/80 p-4 rounded-md">
               <p className="font-semibold">An Error Occurred</p>
               <p>{error}</p>
             </div>
@@ -137,6 +136,6 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
           </a>
         </Button>
       </footer>
-    </div>
+    </main>
   );
 }

@@ -179,19 +179,19 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
             </SidebarGroupLabel>
             <div className="flex flex-col gap-2 pt-2 text-xs text-sidebar-foreground/90 pl-2 group-data-[collapsible=icon]:hidden">
               <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-accent" />
+                  <div className="h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
                   <span>Direct Support (Purchase)</span>
               </div>
               <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-chart-2" />
+                  <div className="h-2 w-2 rounded-full bg-chart-2" aria-hidden="true" />
                   <span>Monetized (Spotify/Apple)</span>
               </div>
               <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-chart-3" />
+                  <div className="h-2 w-2 rounded-full bg-chart-3" aria-hidden="true" />
                   <span>Potentially Monetized</span>
               </div>
               <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-chart-4" />
+                  <div className="h-2 w-2 rounded-full bg-chart-4" aria-hidden="true" />
                   <span>Other</span>
               </div>
             </div>

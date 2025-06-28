@@ -43,7 +43,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${label}`}>
-              <IconComponent className="h-8 w-8 text-muted-foreground hover:text-primary transition-colors" />
+              <IconComponent className="h-10 w-10 text-muted-foreground hover:text-primary transition-colors" />
             </a>
           </TooltipTrigger>
           <TooltipContent>
@@ -70,7 +70,7 @@ export function ArtistCard({ artist }: ArtistCardProps) {
                     <li key={index} className="flex flex-col py-3 sm:flex-row sm:items-center sm:justify-between">
                       <span className="font-medium text-foreground">{track.title}</span>
                       <div className="flex w-full items-center justify-between pt-3 sm:w-auto sm:pt-0 sm:justify-end sm:gap-6">
-                        <div className="flex items-center gap-5">
+                        <div className="flex items-center gap-6">
                           {track.bandcampUrl && renderLink(track.bandcampUrl, 'bandcampUrl')}
                           {track.spotifyUrl && renderLink(track.spotifyUrl, 'spotifyUrl')}
                           {track.appleMusicUrl && renderLink(track.appleMusicUrl, 'appleMusicUrl')}
