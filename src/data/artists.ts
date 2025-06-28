@@ -74,6 +74,7 @@ function loadAndParseArtists(): Artist[] {
 
   for (const dataset of datasetsToParse) {
     try {
+      console.log(`[artists.ts] Parsing dataset: ${dataset.name}`);
       const absolutePath = path.join(process.cwd(), 'src/data', dataset.filePath);
       const fileContent = fs.readFileSync(absolutePath, 'utf8');
       
@@ -157,8 +158,9 @@ function loadAndParseArtists(): Artist[] {
  * @returns An array of artists.
  */
 export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[] }): Artist[] {
-    if (!cachedArtists || cachedArtists.length === 0) {
-        console.log('[artists.ts] No cached artists found or cache is empty. Loading from source.');
+    // In development, always reload the data to see changes. In production, use cache.
+    if (process.env.NODE_ENV === 'development' || !cachedArtists || cachedArtists.length === 0) {
+        console.log('[artists.ts] Bypassing cache in development or cache is empty. Loading from source.');
         cachedArtists = loadAndParseArtists();
     }
 
