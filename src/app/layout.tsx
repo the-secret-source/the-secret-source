@@ -3,9 +3,36 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { SidebarProvider } from '@/components/ui/sidebar';
 
+const title = 'the secret source';
+const description = 'supporting the artists whose works have made our works possible';
+const url = 'https://the-secret-source.web.app';
+
 export const metadata: Metadata = {
-  title: 'the secret source',
-  description: 'supporting the artists whose works have made our works possible',
+  title: title,
+  description: description,
+  keywords: ['open source music', 'music datasets', 'artist discovery', 'support artists', 'creative commons music'],
+  authors: [{ name: 'Karn Watcharasupat', url: 'https://github.com/kwatcharasupat' }],
+  metadataBase: new URL(url),
+  openGraph: {
+    type: 'website',
+    url: '/',
+    title: title,
+    description: description,
+    images: [
+      {
+        url: `https://placehold.co/1200x630.png`,
+        width: 1200,
+        height: 630,
+        alt: title,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: title,
+    description: description,
+    images: [`https://placehold.co/1200x630.png`],
+  },
 };
 
 export default function RootLayout({
