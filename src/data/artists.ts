@@ -47,6 +47,11 @@ const datasetsToParse = [
     filePath: 'datasets/medleydb.csv',
     parser: genericCsvParser,
   },
+  {
+    name: 'MagnaTagATune',
+    filePath: 'datasets/mtat.csv',
+    parser: genericCsvParser,
+  },
 ];
 
 /**
