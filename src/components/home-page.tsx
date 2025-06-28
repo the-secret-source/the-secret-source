@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
@@ -8,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArtistCard } from '@/components/artist-card';
 import { ArtistCardSkeleton } from '@/components/artist-card-skeleton';
 import { Loader2 } from 'lucide-react';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaDatabase } from 'react-icons/fa';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 interface HomePageProps {
@@ -100,7 +101,7 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
           <p className="mt-2 text-lg font-code text-muted-foreground">supporting the artists whose works have made our works possible</p>
         </header>
 
-        <div className="flex justify-center sm:order-last">
+        <div className="flex justify-center sm:order-first">
           <Button onClick={handleNewArtist} disabled={isDiscovering || !canDiscover} size="lg" className="shadow-lg">
             {isDiscovering ? (
               <>
@@ -129,12 +130,20 @@ export function HomePage({ selectedDatasets, selectedLinkTypes }: HomePageProps)
       </div>
       <footer className="mt-auto flex flex-col items-center gap-4 py-6 text-center text-sm text-muted-foreground">
         {year && <p>&copy; {year} Karn Watcharasupat and contributors</p>}
-        <Button asChild variant="outline" size="sm">
-          <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
-            <FaGithub />
-            Contribute on GitHub
-          </a>
-        </Button>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Button asChild variant="outline" size="sm">
+            <a href="https://github.com/kwatcharasupat/the-secret-source" target="_blank" rel="noopener noreferrer">
+              <FaGithub />
+              Contribute on GitHub
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <a href="https://github.com/kwatcharasupat/the-secret-source/tree/main/src/data/datasets" target="_blank" rel="noopener noreferrer">
+              <FaDatabase />
+              View Full Dataset
+            </a>
+          </Button>
+        </div>
       </footer>
     </main>
   );
