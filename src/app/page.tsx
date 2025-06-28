@@ -11,7 +11,8 @@ export default function Home() {
   const trackCount = allTracks.length;
 
   const directSupportKeys = ['bandcampUrl', 'discogsUrl'];
-  const streamingKeys = ['spotifyUrl', 'appleMusicUrl', 'youtubeUrl', 'soundcloudUrl'];
+  const definitelyMonetizedKeys = ['spotifyUrl', 'appleMusicUrl'];
+  const potentiallyMonetizedKeys = ['youtubeUrl', 'soundcloudUrl'];
   const otherLinkKeys = ['otherLinks', 'weathervaneUrl', 'mixRescueUrl'];
 
   const hasLink = (obj: any, keys: string[]) => {
@@ -30,9 +31,13 @@ export default function Home() {
     const hasTrackDirectLink = artist.tracks.some(track => hasLink(track, directSupportKeys));
     if (hasArtistDirectLink || hasTrackDirectLink) return 'direct';
 
-    const hasArtistStreamingLink = hasLink(artist, streamingKeys);
-    const hasTrackStreamingLink = artist.tracks.some(track => hasLink(track, streamingKeys));
-    if (hasArtistStreamingLink || hasTrackStreamingLink) return 'streaming';
+    const hasArtistDefinitelyMonetizedLink = hasLink(artist, definitelyMonetizedKeys);
+    const hasTrackDefinitelyMonetizedLink = artist.tracks.some(track => hasLink(track, definitelyMonetizedKeys));
+    if (hasArtistDefinitelyMonetizedLink || hasTrackDefinitelyMonetizedLink) return 'definitelyMonetized';
+
+    const hasArtistPotentiallyMonetizedLink = hasLink(artist, potentiallyMonetizedKeys);
+    const hasTrackPotentiallyMonetizedLink = artist.tracks.some(track => hasLink(track, potentiallyMonetizedKeys));
+    if (hasArtistPotentiallyMonetizedLink || hasTrackPotentiallyMonetizedLink) return 'potentiallyMonetized';
 
     const hasArtistOtherLink = hasLink(artist, otherLinkKeys);
     const hasTrackOtherLink = artist.tracks.some(track => hasLink(track, otherLinkKeys));
@@ -42,19 +47,22 @@ export default function Home() {
   });
 
   const artistsWithDirectSupport = artistsCategorized.filter(c => c === 'direct').length;
-  const artistsWithStreaming = artistsCategorized.filter(c => c === 'streaming').length;
+  const artistsWithDefinitelyMonetized = artistsCategorized.filter(c => c === 'definitelyMonetized').length;
+  const artistsWithPotentiallyMonetized = artistsCategorized.filter(c => c === 'potentiallyMonetized').length;
   const artistsWithOther = artistsCategorized.filter(c => c === 'other').length;
 
   // Categorize Tracks based on the best available link
   const tracksCategorized = allTracks.map(track => {
     if (hasLink(track, directSupportKeys)) return 'direct';
-    if (hasLink(track, streamingKeys)) return 'streaming';
+    if (hasLink(track, definitelyMonetizedKeys)) return 'definitelyMonetized';
+    if (hasLink(track, potentiallyMonetizedKeys)) return 'potentiallyMonetized';
     if (hasLink(track, otherLinkKeys)) return 'other';
     return 'none';
   });
   
   const tracksWithDirectSupport = tracksCategorized.filter(c => c === 'direct').length;
-  const tracksWithStreaming = tracksCategorized.filter(c => c === 'streaming').length;
+  const tracksWithDefinitelyMonetized = tracksCategorized.filter(c => c === 'definitelyMonetized').length;
+  const tracksWithPotentiallyMonetized = tracksCategorized.filter(c => c === 'potentiallyMonetized').length;
   const tracksWithOther = tracksCategorized.filter(c => c === 'other').length;
   
   const datasetCounts = allDatasetNames.reduce((acc, name) => {
@@ -78,16 +86,20 @@ export default function Home() {
     artistCount,
     trackCount,
     artistsWithDirectSupport,
-    artistsWithStreaming,
+    artistsWithDefinitelyMonetized,
+    artistsWithPotentiallyMonetized,
     artistsWithOther,
     artistsWithDirectSupportPercentage: artistCount > 0 ? Math.round((artistsWithDirectSupport / artistCount) * 100) : 0,
-    artistsWithStreamingPercentage: artistCount > 0 ? Math.round((artistsWithStreaming / artistCount) * 100) : 0,
+    artistsWithDefinitelyMonetizedPercentage: artistCount > 0 ? Math.round((artistsWithDefinitelyMonetized / artistCount) * 100) : 0,
+    artistsWithPotentiallyMonetizedPercentage: artistCount > 0 ? Math.round((artistsWithPotentiallyMonetized / artistCount) * 100) : 0,
     artistsWithOtherPercentage: artistCount > 0 ? Math.round((artistsWithOther / artistCount) * 100) : 0,
     tracksWithDirectSupport,
-    tracksWithStreaming,
+    tracksWithDefinitelyMonetized,
+    tracksWithPotentiallyMonetized,
     tracksWithOther,
     tracksWithDirectSupportPercentage: trackCount > 0 ? Math.round((tracksWithDirectSupport / trackCount) * 100) : 0,
-    tracksWithStreamingPercentage: trackCount > 0 ? Math.round((tracksWithStreaming / trackCount) * 100) : 0,
+    tracksWithDefinitelyMonetizedPercentage: trackCount > 0 ? Math.round((tracksWithDefinitelyMonetized / trackCount) * 100) : 0,
+    tracksWithPotentiallyMonetizedPercentage: trackCount > 0 ? Math.round((tracksWithPotentiallyMonetized / trackCount) * 100) : 0,
     tracksWithOtherPercentage: trackCount > 0 ? Math.round((tracksWithOther / trackCount) * 100) : 0,
     datasetCounts,
   };

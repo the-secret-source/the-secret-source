@@ -10,16 +10,20 @@ export interface AppSidebarStats {
   artistCount: number;
   trackCount: number;
   artistsWithDirectSupport: number;
-  artistsWithStreaming: number;
+  artistsWithDefinitelyMonetized: number;
+  artistsWithPotentiallyMonetized: number;
   artistsWithOther: number;
   artistsWithDirectSupportPercentage: number;
-  artistsWithStreamingPercentage: number;
+  artistsWithDefinitelyMonetizedPercentage: number;
+  artistsWithPotentiallyMonetizedPercentage: number;
   artistsWithOtherPercentage: number;
   tracksWithDirectSupport: number;
-  tracksWithStreaming: number;
+  tracksWithDefinitelyMonetized: number;
+  tracksWithPotentiallyMonetized: number;
   tracksWithOther: number;
   tracksWithDirectSupportPercentage: number;
-  tracksWithStreamingPercentage: number;
+  tracksWithDefinitelyMonetizedPercentage: number;
+  tracksWithPotentiallyMonetizedPercentage: number;
   tracksWithOtherPercentage: number;
   datasetCounts: Record<string, { artists: number; tracks: number }>;
 }
@@ -50,13 +54,15 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
 
   const artistProgressData = [
     { value: stats.artistsWithDirectSupportPercentage, color: 'bg-accent', tooltip: `${stats.artistsWithDirectSupport} artists with direct support links` },
-    { value: stats.artistsWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.artistsWithStreaming} artists with potentially monetized links` },
+    { value: stats.artistsWithDefinitelyMonetizedPercentage, color: 'bg-chart-2', tooltip: `${stats.artistsWithDefinitelyMonetized} artists with monetized streaming links` },
+    { value: stats.artistsWithPotentiallyMonetizedPercentage, color: 'bg-chart-3', tooltip: `${stats.artistsWithPotentiallyMonetized} artists with potentially monetized links` },
     { value: stats.artistsWithOtherPercentage, color: 'bg-chart-4', tooltip: `${stats.artistsWithOther} artists with other links` },
   ];
 
   const trackProgressData = [
     { value: stats.tracksWithDirectSupportPercentage, color: 'bg-accent', tooltip: `${stats.tracksWithDirectSupport} tracks with direct support links` },
-    { value: stats.tracksWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.tracksWithStreaming} tracks with potentially monetized links` },
+    { value: stats.tracksWithDefinitelyMonetizedPercentage, color: 'bg-chart-2', tooltip: `${stats.tracksWithDefinitelyMonetized} tracks with monetized streaming links` },
+    { value: stats.tracksWithPotentiallyMonetizedPercentage, color: 'bg-chart-3', tooltip: `${stats.tracksWithPotentiallyMonetized} tracks with potentially monetized links` },
     { value: stats.tracksWithOtherPercentage, color: 'bg-chart-4', tooltip: `${stats.tracksWithOther} tracks with other links` },
   ];
 
@@ -177,7 +183,11 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
               </div>
               <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-chart-2" />
-                  <span>Potentially Monetized (Streaming)</span>
+                  <span>Monetized (Spotify/Apple)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-chart-3" />
+                  <span>Potentially Monetized</span>
               </div>
               <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-chart-4" />
