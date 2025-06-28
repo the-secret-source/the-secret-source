@@ -4,7 +4,7 @@
 
 ## Supporting This Project
 
-Even though there is a sponsor button on the side of this repo, this is meant to only cover the cost of hosting the website. Any additional proceeds (after applicable tax) will go directly to [Weathervane Music](https://weathervanemusic.org/donate). Updates will be posted here for full transparency.
+Even though there is a sponsor button on the side of this repo, this is meant to only cover the cost of hosting the website. Any additional proceeds (after applicable tax) will go directly to [Weathervane Music](https://weathervanemusic.org/donate), other similar non-profits, or the artists. Updates will be posted here for full transparency.
 
 If you would like to cover the long-term cost of hosting this website directly (i.e., be billed by GCP for this project instead of me), please contact me at kwatcharasupat [at] ieee.org. 
 
