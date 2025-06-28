@@ -47,50 +47,44 @@ export function MainLayout({ allDatasetNames, artists }: MainLayoutProps) {
       ...potentiallyMonetizedKeys
     ]);
 
-    const hasLink = (obj: any, keys: string[]) => {
-      if (!obj) return false;
-      return keys.some(key => {
-        if (key === 'otherLinks') {
-          return Array.isArray(obj[key]) && obj[key].length > 0;
-        }
-        return !!obj[key];
-      });
-    }
-
-    const hasOtherLink = (obj: any): boolean => {
-      if (!obj) return false;
+    const getCategory = (obj: any): string => {
+      if (directSupportKeys.some(key => obj[key])) return 'direct';
+      if (definitelyMonetizedKeys.some(key => obj[key])) return 'definitelyMonetized';
+      if (potentiallyMonetizedKeys.some(key => obj[key])) return 'potentiallyMonetized';
+      
       for (const key in obj) {
-        if ((key.endsWith('Url') || key === 'otherLinks') && !primaryLinkKeys.has(key)) {
-          if (key === 'otherLinks') {
-            if (Array.isArray(obj[key]) && obj[key].length > 0) return true;
-          } else if (obj[key]) {
-            return true;
-          }
+        if (key.endsWith('Url') && !primaryLinkKeys.has(key) && obj[key]) {
+          return 'other';
         }
       }
-      return false;
+      if (Array.isArray(obj.otherLinks) && obj.otherLinks.length > 0) {
+        return 'other';
+      }
+
+      return 'none';
+    }
+
+    const getArtistCategory = (artist: Artist): string => {
+      const artistCategory = getCategory(artist);
+      if (artistCategory !== 'none') return artistCategory;
+
+      const trackCategories = artist.tracks.map(getCategory);
+      if (trackCategories.includes('direct')) return 'direct';
+      if (trackCategories.includes('definitelyMonetized')) return 'definitelyMonetized';
+      if (trackCategories.includes('potentiallyMonetized')) return 'potentiallyMonetized';
+      if (trackCategories.includes('other')) return 'other';
+      
+      return 'none';
     };
 
-    const artistsCategorized = filteredArtists.map(artist => {
-      if (hasLink(artist, directSupportKeys) || artist.tracks.some(track => hasLink(track, directSupportKeys))) return 'direct';
-      if (hasLink(artist, definitelyMonetizedKeys) || artist.tracks.some(track => hasLink(track, definitelyMonetizedKeys))) return 'definitelyMonetized';
-      if (hasLink(artist, potentiallyMonetizedKeys) || artist.tracks.some(track => hasLink(track, potentiallyMonetizedKeys))) return 'potentiallyMonetized';
-      if (hasOtherLink(artist) || artist.tracks.some(hasOtherLink)) return 'other';
-      return 'none';
-    });
+    const artistsCategorized = filteredArtists.map(getArtistCategory);
 
     const artistsWithDirectSupport = artistsCategorized.filter(c => c === 'direct').length;
     const artistsWithDefinitelyMonetized = artistsCategorized.filter(c => c === 'definitelyMonetized').length;
     const artistsWithPotentiallyMonetized = artistsCategorized.filter(c => c === 'potentiallyMonetized').length;
     const artistsWithOther = artistsCategorized.filter(c => c === 'other').length;
 
-    const tracksCategorized = allTracks.map(track => {
-      if (hasLink(track, directSupportKeys)) return 'direct';
-      if (hasLink(track, definitelyMonetizedKeys)) return 'definitelyMonetized';
-      if (hasLink(track, potentiallyMonetizedKeys)) return 'potentiallyMonetized';
-      if (hasOtherLink(track)) return 'other';
-      return 'none';
-    });
+    const tracksCategorized = allTracks.map(getCategory);
     
     const tracksWithDirectSupport = tracksCategorized.filter(c => c === 'direct').length;
     const tracksWithDefinitelyMonetized = tracksCategorized.filter(c => c === 'definitelyMonetized').length;
