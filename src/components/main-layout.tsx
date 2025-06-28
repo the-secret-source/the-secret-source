@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,14 +11,9 @@ interface MainLayoutProps {
   stats: AppSidebarStats;
 }
 
-const allLinkTypeKeys = [
-  'bandcampUrl', 'spotifyUrl', 'appleMusicUrl', 'discogsUrl', 
-  'youtubeUrl', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl', 'otherLinks'
-];
-
 export function MainLayout({ allDatasetNames, stats }: MainLayoutProps) {
   const [selectedDatasets, setSelectedDatasets] = useState<string[]>([]);
-  const [selectedLinkTypes, setSelectedLinkTypes] = useState<string[]>(allLinkTypeKeys);
+  const [selectedLinkTypes, setSelectedLinkTypes] = useState<string[]>(['bandcampUrl', 'discogsUrl']);
   
   useEffect(() => {
     setSelectedDatasets(allDatasetNames);

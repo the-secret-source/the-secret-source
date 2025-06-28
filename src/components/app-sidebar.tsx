@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail, SidebarSeparator, SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
@@ -39,15 +40,27 @@ interface AppSidebarProps {
 
 const linkTypeFilters = [
   { id: 'bandcampUrl', label: 'Bandcamp' },
+  { id: 'discogsUrl', label: 'Discogs' },
   { id: 'spotifyUrl', label: 'Spotify' },
   { id: 'appleMusicUrl', label: 'Apple Music' },
-  { id: 'discogsUrl', label: 'Discogs' },
   { id: 'youtubeUrl', label: 'YouTube' },
   { id: 'soundcloudUrl', label: 'SoundCloud' },
   { id: 'weathervaneUrl', label: 'Weathervane' },
   { id: 'mixRescueUrl', label: 'Mix Rescue' },
   { id: 'otherLinks', label: 'Other' },
 ];
+
+const linkTypeColors: Record<string, string> = {
+  bandcampUrl: 'bg-accent',
+  discogsUrl: 'bg-accent',
+  spotifyUrl: 'bg-chart-2',
+  appleMusicUrl: 'bg-chart-2',
+  youtubeUrl: 'bg-chart-3',
+  soundcloudUrl: 'bg-chart-3',
+  weathervaneUrl: 'bg-chart-4',
+  mixRescueUrl: 'bg-chart-4',
+  otherLinks: 'bg-chart-4',
+};
 
 export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDatasetToggle, selectedLinkTypes, onLinkTypeToggle }: AppSidebarProps) {
   const { artistCount, trackCount } = stats;
@@ -133,16 +146,19 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
                   Link Type
                 </Label>
                 {linkTypeFilters.map(filter => (
-                  <div key={filter.id} className="flex items-center space-x-2 pl-2">
-                    <Checkbox
-                      id={filter.id}
-                      value={filter.id}
-                      checked={selectedLinkTypes.includes(filter.id)}
-                      onCheckedChange={() => onLinkTypeToggle(filter.id)}
-                    />
-                    <Label htmlFor={filter.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
-                      {filter.label}
-                    </Label>
+                  <div key={filter.id} className="flex items-center justify-between px-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={filter.id}
+                        value={filter.id}
+                        checked={selectedLinkTypes.includes(filter.id)}
+                        onCheckedChange={() => onLinkTypeToggle(filter.id)}
+                      />
+                      <Label htmlFor={filter.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sidebar-foreground/90">
+                        {filter.label}
+                      </Label>
+                    </div>
+                    <div className={`h-2 w-2 rounded-full ${linkTypeColors[filter.id]}`} aria-hidden="true" />
                   </div>
                 ))}
               </div>
