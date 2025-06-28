@@ -50,13 +50,13 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
 
   const artistProgressData = [
     { value: stats.artistsWithDirectSupportPercentage, color: 'bg-accent', tooltip: `${stats.artistsWithDirectSupport} artists with direct support links` },
-    { value: stats.artistsWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.artistsWithStreaming} artists with streaming only links` },
+    { value: stats.artistsWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.artistsWithStreaming} artists with potentially monetized links` },
     { value: stats.artistsWithOtherPercentage, color: 'bg-chart-4', tooltip: `${stats.artistsWithOther} artists with other links` },
   ];
 
   const trackProgressData = [
     { value: stats.tracksWithDirectSupportPercentage, color: 'bg-accent', tooltip: `${stats.tracksWithDirectSupport} tracks with direct support links` },
-    { value: stats.tracksWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.tracksWithStreaming} tracks with streaming only links` },
+    { value: stats.tracksWithStreamingPercentage, color: 'bg-chart-2', tooltip: `${stats.tracksWithStreaming} tracks with potentially monetized links` },
     { value: stats.tracksWithOtherPercentage, color: 'bg-chart-4', tooltip: `${stats.tracksWithOther} tracks with other links` },
   ];
 
@@ -177,7 +177,7 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
               </div>
               <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-chart-2" />
-                  <span>Streaming Only</span>
+                  <span>Potentially Monetized (Streaming)</span>
               </div>
               <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-chart-4" />

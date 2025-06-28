@@ -11,8 +11,8 @@ export default function Home() {
   const trackCount = allTracks.length;
 
   const directSupportKeys = ['bandcampUrl', 'discogsUrl'];
-  const streamingKeys = ['spotifyUrl', 'appleMusicUrl'];
-  const otherLinkKeys = ['youtubeUrl', 'otherLinks', 'soundcloudUrl', 'weathervaneUrl', 'mixRescueUrl'];
+  const streamingKeys = ['spotifyUrl', 'appleMusicUrl', 'youtubeUrl', 'soundcloudUrl'];
+  const otherLinkKeys = ['otherLinks', 'weathervaneUrl', 'mixRescueUrl'];
 
   const hasLink = (obj: any, keys: string[]) => {
     if (!obj) return false;
