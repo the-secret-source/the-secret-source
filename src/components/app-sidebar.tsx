@@ -1,11 +1,12 @@
 
 'use client';
 
-import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail, SidebarSeparator, SidebarGroup, SidebarGroupLabel } from "@/components/ui/sidebar";
+import { Sidebar, SidebarHeader, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarTrigger, SidebarRail, SidebarSeparator, SidebarGroup, SidebarGroupLabel, SidebarFooter } from "@/components/ui/sidebar";
 import { Music, Users, Link, Filter, HelpCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { StackedProgress } from "./ui/stacked-progress";
+import { ThemeToggle } from "./theme-toggle";
 
 export interface AppSidebarStats {
   artistCount: number;
@@ -210,6 +211,12 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
           </SidebarGroup>
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter className="p-2 mt-auto border-t border-sidebar-border">
+          <div className="flex items-center justify-between group-data-[collapsible=icon]:justify-center">
+              <p className="text-xs text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden">Theme</p>
+              <ThemeToggle />
+          </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
