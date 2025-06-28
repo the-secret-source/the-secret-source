@@ -136,6 +136,7 @@ export function AppSidebar({ stats, allDatasetNames, selectedDatasets, onDataset
                   <div key={filter.id} className="flex items-center space-x-2 pl-2">
                     <Checkbox
                       id={filter.id}
+                      value={filter.id}
                       checked={selectedLinkTypes.includes(filter.id)}
                       onCheckedChange={() => onLinkTypeToggle(filter.id)}
                     />
