@@ -52,6 +52,11 @@ const datasetsToParse = [
     filePath: 'datasets/mtat.csv',
     parser: genericCsvParser,
   },
+  {
+    name: 'MoisesDB',
+    filePath: 'datasets/moisesdb.csv',
+    parser: genericCsvParser,
+  },
 ];
 
 /**
@@ -173,7 +178,10 @@ export function getArtists(filters?: { datasets?: string[]; linkTypes?: string[]
       }
 
       const otherKeys = ['weathervaneUrl', 'mixRescueUrl', 'otherLinks'];
-      const expandedLinkTypes = filters.linkTypes.flatMap(lt => (lt === 'other' ? otherKeys : lt));
+      const expandedLinkTypes = filters.linkTypes.flatMap(lt => {
+        if (lt === 'other') return ['otherLinks', 'weathervaneUrl', 'mixRescueUrl', 'magnatuneUrl'];
+        return lt;
+      });
 
       artistsToFilter = artistsToFilter.filter(artist => {
         // Check if the artist or any of their tracks has at least one of the selected link types

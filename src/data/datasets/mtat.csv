@@ -1,4 +1,3 @@
-artist_name,track_title,genre,bandcamp_url,spotify_url
 artist_name,track_title,url_has_any,paid_has_any,direct_has_any,bandcamp_url,discogs_url,spotify_url,soundcloud_url,youtube_url,apple_music_url,magnatune_url,other_url,weathervane_url,mix_rescue_url,mix_rescue_url
 ABA STRUCTURE,EPIC,1,1,1,,https://www.discogs.com/release/221086-ABA-Structure-Epic,,,,,http://www.magnatune.com/artists/albums/kenji-epic/,,,,
 ABA STRUCTURE,Tektonik Illusion,1,1,1,,https://www.discogs.com/release/216735-ABA-Structure-Tektonik-EP,,,,,http://www.magnatune.com/artists/albums/kenji-tektillu/,,,,
