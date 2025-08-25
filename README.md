@@ -8,22 +8,6 @@ Even though there is a sponsor button on the side of this repo, this is meant to
 
 If you would like to cover the long-term cost of hosting this website directly (i.e., be billed by GCP for this project instead of me), please contact me at kwatcharasupat [at] ieee.org. 
 
-## Getting Started
-
-To get the project running on your local machine, follow these steps:
-
-1.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-
-2.  **Run the Development Server**:
-    ```bash
-    npm run dev
-    ```
-
-    The application will be available at [http://localhost:9002](http://localhost:9002).
-
 ## Contributing
 
 We welcome contributions to expand the list of open-source artists! If you know of a dataset and want to add its artists to our app, please follow these steps.
