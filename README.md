@@ -28,6 +28,10 @@ To get the project running on your local machine, follow these steps:
 
 We welcome contributions to expand the list of open-source artists! If you know of a dataset and want to add its artists to our app, please follow these steps.
 
+### Adding or Modifying Information on Existing Datasets
+
+Go to [the Google Sheets here](https://docs.google.com/spreadsheets/d/13G2YZvER2SdkC7dzfCfWEpBG2V9R7S0Xg2NLCBcRpaU/edit?usp=sharing) and make comments!
+
 ### Adding a New Dataset
 
 We encourage contributions! The easiest way to add artists is by providing a CSV file.
